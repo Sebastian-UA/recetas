@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  
+}
+
+model usuario{
+  id Int  @id @default(autoincrement())
+  nombre String
+  correo String @unique
+  contraseña String
+
+  receta receta[] //dice que esta esta relacionada a N (muchos), solo en prisma
+
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+model receta{
+  id Int @id @default(autoincrement())
+  usuario_id Int // el campo de otra tabla
+  nombre String
+  imagen String?
+  usuario usuario @relation(fields: [usuario_id], references: [id])//indica de donde sale el campo de la otra tabla, osea la clave foranea
+
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  pasos pasos[]
+  receta_ingrediente receta_ingrediente[]
+}
+
+model pasos{
+  id Int @id @default(autoincrement())
+  receta_id Int
+  pasos String
+
+  receta receta @relation(fields: [receta_id], references: [id])
+
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+model ingrediente{
+  id Int @id @default(autoincrement())
+  nombre String
+
+  receta_ingrediente receta_ingrediente[]
+
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+model receta_ingrediente{
+  id Int @id @default(autoincrement())
+  ingrediente_id Int
+  receta_id Int
+  cantidad String
+
+  ingrediente ingrediente @relation(fields: [ingrediente_id], references: [id] )
+  receta receta @relation(fields: [receta_id], references: [id])
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
