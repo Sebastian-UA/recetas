@@ -5,33 +5,24 @@ import {
   Body,
   Param,
   Delete,
-  UseGuards,
-  Req,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
 import { RecetaService } from './receta.service';
 import { CreateRecetaDto } from './dto/create-receta.dto';
-import { JwtUser } from '../auth/jwt-payload.interface';
 
 @Controller('receta')
-@UseGuards(AuthGuard('jwt'))
 export class RecetaController {
   constructor(private readonly recetaService: RecetaService) {}
 
   @Post()
-  create(
-    @Body() createRecetaDto: CreateRecetaDto,
-    @Req() req: Request,
-  ) {
-    const user = req.user as JwtUser; // 👈 casting
-    return this.recetaService.create(createRecetaDto, user.id);
+  create(@Body() createRecetaDto: CreateRecetaDto) {
+    const usuarioId = 1; // 🔴 fijo por ahora
+    return this.recetaService.create(createRecetaDto, usuarioId);
   }
 
   @Get()
-  findMisRecetas(@Req() req: Request) {
-    const user = req.user as JwtUser;
-    return this.recetaService.findByUsuario(user.id);
+  findMisRecetas() {
+    const usuarioId = 1; // 🔴 fijo por ahora
+    return this.recetaService.findByUsuario(usuarioId);
   }
 
   @Delete(':id')
