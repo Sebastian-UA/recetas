@@ -14,17 +14,21 @@ export default function RecetasPage() {
   };
 
   useEffect(() => {
-    const raw = localStorage.getItem("usuario");
-    if (!raw) return;
+    const token = localStorage.getItem("token");
+    const userRaw = localStorage.getItem("usuario");
 
-    const parsed = JSON.parse(raw);
+    if (!token || !userRaw) return;
 
-    console.log("PARSED:", parsed);
-    console.log("NOMBRE:", parsed.usuario.nombre);
-
-    setUsuario(parsed.usuario); // 👈 CLAVE
-    cargarRecetas();
+    try {
+      const parsedUser = JSON.parse(userRaw);
+      console.log("PARSED USER:", parsedUser);
+      setUsuario(parsedUser);
+      cargarRecetas();
+    } catch (e) {
+      console.error("Error parseando usuario", e);
+    }
   }, []);
+
 
 
   return (

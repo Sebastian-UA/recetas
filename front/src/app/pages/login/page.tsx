@@ -24,18 +24,18 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      const usuario = await login(correo, contraseña);
+      const data = await login(correo, contraseña);
 
-      console.log("LOGIN OK:", usuario);
-
-      // 👉 por ahora SOLO guardamos el usuario
-      localStorage.setItem("usuario", JSON.stringify(usuario));
+      // ✅ GUARDAR CORRECTAMENTE
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
       router.push("/pages/recetas");
     } catch (error) {
       alert("Correo o contraseña incorrectos");
     }
   };
+
 
 
   return (
