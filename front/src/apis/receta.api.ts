@@ -5,47 +5,39 @@ function getToken() {
 }
 
 export async function getMisRecetas() {
-  const token = localStorage.getItem('token');
-  console.log('TOKEN EN getMisRecetas:', token);
+  const token = getToken();
+  console.log("TOKEN EN getMisRecetas:", token);
 
   if (!token) {
-    console.log('❌ NO HAY TOKEN, NO LLAMO AL BACK');
+    console.log("❌ NO HAY TOKEN, NO LLAMO AL BACK");
     return [];
   }
 
-  const res = await fetch('http://localhost:4000/api/receta', {
+  const res = await fetch(`${API_URL}/receta`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  console.log('STATUS:', res.status);
+  console.log("STATUS:", res.status);
 
-  if (!res.ok) throw new Error('No autorizado');
+  if (!res.ok) throw new Error("No autorizado");
   return res.json();
 }
-
-
-//export async function getMisRecetas() {
-//  const res = await fetch(`${API_URL}/receta`, {
-//    headers: {
-//      Authorization: `Bearer ${getToken()}`,
-//    },
-//  });
-
-//  if (!res.ok) throw new Error("No autorizado");
-//  return res.json();
-//}
 
 export async function createReceta(data: {
   nombre: string;
   imagen?: string;
 }) {
+  const token = getToken();
+
+  if (!token) throw new Error("No autorizado");
+
   const res = await fetch(`${API_URL}/receta`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
