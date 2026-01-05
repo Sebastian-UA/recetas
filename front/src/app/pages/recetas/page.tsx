@@ -6,6 +6,7 @@ import CrearRecetaModal from "@/components/ui/receta_modal";
 
 export default function RecetasPage() {
   const [recetas, setRecetas] = useState([]);
+  const [usuario, setUsuario] = useState<any>(null);
 
   const cargarRecetas = async () => {
     const data = await getMisRecetas();
@@ -13,17 +14,33 @@ export default function RecetasPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return; // 👈 CLAVE
+    const raw = localStorage.getItem("usuario");
+    if (!raw) return;
 
+    const parsed = JSON.parse(raw);
+
+    console.log("PARSED:", parsed);
+    console.log("NOMBRE:", parsed.usuario.nombre);
+
+    setUsuario(parsed.usuario); // 👈 CLAVE
     cargarRecetas();
   }, []);
 
 
   return (
+
     <div className="max-w-4xl mx-auto p-6">
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Mis recetas</h1>
+      <div className="flex justify-between mb-6 items-center">
+        <div>
+          <h1 className="text-2xl font-bold">Mis recetas</h1>
+
+          {usuario && (
+            <p className="text-sm text-gray-600">
+              Bienvenido <strong>{usuario.nombre}</strong>
+            </p>
+          )}
+        </div>
+
         <CrearRecetaModal onCreated={cargarRecetas} />
       </div>
 
