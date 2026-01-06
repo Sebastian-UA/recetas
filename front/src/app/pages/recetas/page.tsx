@@ -3,31 +3,48 @@
 import { useEffect, useState } from "react";
 import { getMisRecetas } from "@/apis/receta.api";
 import CrearRecetaModal from "@/components/ui/receta_modal";
+import Link from "next/link";
 
 export default function RecetasPage() {
   const [recetas, setRecetas] = useState([]);
   const [usuario, setUsuario] = useState<any>(null);
 
-  const cargarRecetas = async () => {
-    const data = await getMisRecetas();
+  const cargarRecetas = async (token: string) => {
+    const data = await getMisRecetas(token);
     setRecetas(data);
   };
 
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const userRaw = localStorage.getItem("usuario");
 
-    if (!token || !userRaw) return;
+    console.log("TOKEN ACTUAL:", token);
 
-    try {
-      const parsedUser = JSON.parse(userRaw);
-      console.log("PARSED USER:", parsedUser);
-      setUsuario(parsedUser);
-      cargarRecetas();
-    } catch (e) {
-      console.error("Error parseando usuario", e);
+    if (!token) {
+      console.error("No hay token almacenado");
+      return;
     }
+
+    getMisRecetas(token)
+      .then((data) => {
+        console.log("RECETAS:", data);
+        setRecetas(data);
+      })
+      .catch((err) => {
+        console.error("Error real:", err);
+      });
   }, []);
+
+
+
+  const recargarRecetas = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    cargarRecetas(token);
+  };
+
+
+
 
   return (
 
@@ -43,16 +60,27 @@ export default function RecetasPage() {
           )}
         </div>
 
-        <CrearRecetaModal onCreated={cargarRecetas} />
+        <CrearRecetaModal onCreated={recargarRecetas} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {recetas.map((r: any) => (
-          <div key={r.id} className="border p-4 rounded">
+          <Link
+            key={r.id}
+            href={`/pages/recetas/${r.id}`}
+            className="border p-4 rounded hover:shadow cursor-pointer block"
+          >
             <h2 className="font-semibold">{r.nombre}</h2>
-            {r.imagen && <img src={r.imagen} className="mt-2 rounded" />}
-          </div>
+
+            {r.imagen && (
+              <img
+                src={r.imagen}
+                className="mt-2 rounded h-40 w-full object-cover"
+              />
+            )}
+          </Link>
         ))}
+
       </div>
     </div>
   );

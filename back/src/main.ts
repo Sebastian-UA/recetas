@@ -1,11 +1,19 @@
+import * as dotenv from 'dotenv';
+
+dotenv.config();   // 🔥 Cargar .env antes de todo
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api')//para que la direccion tenga el "api"
 
-  app.enableCors();//para permitir que se pueda conectar el puerto del front
+  app.setGlobalPrefix('api'); // ya lo tenías perfecto
+  app.enableCors();
+
+  console.log('👉 JWT_SECRET desde main:', process.env.JWT_SECRET); // test
+
   await app.listen(process.env.PORT ?? 4000);
 }
+
 bootstrap();

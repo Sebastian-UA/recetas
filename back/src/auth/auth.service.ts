@@ -8,7 +8,7 @@ export class AuthService {
 
   login(usuario: any) {
     const payload = {
-      sub: usuario.id,
+      id: usuario.id,
       correo: usuario.correo,
     };
 
