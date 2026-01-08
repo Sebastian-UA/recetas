@@ -17,7 +17,7 @@ import { JwtRequest } from '../auth/jwt-request.interface';
 @Controller('receta')
 @UseGuards(JwtAuthGuard)
 export class RecetaController {
-  constructor(private readonly recetaService: RecetaService) {}
+  constructor(private readonly recetaService: RecetaService) { }
 
   @Post()
   create(@Body() dto: CreateRecetaDto, @Req() req: JwtRequest) {
@@ -27,5 +27,16 @@ export class RecetaController {
   @Get()
   findMisRecetas(@Req() req: JwtRequest) {
     return this.recetaService.findByUsuario(req.user.id);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string, @Req() req: JwtRequest) {
+    const receta = await this.recetaService.findOne(+id, req.user.id);
+
+    if (!receta) {
+      throw new NotFoundException('Receta no encontrada');
+    }
+
+    return receta;
   }
 }

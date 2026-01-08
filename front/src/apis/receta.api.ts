@@ -20,16 +20,15 @@ export async function getMisRecetas(token: string) {
 
 
 
-export async function getRecetaById(id: string) {
-  const token = localStorage.getItem("token");
-
+export async function getRecetaById(id: number, token: string) {
   const res = await fetch(`http://localhost:4000/api/receta/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  if (!res.ok) throw new Error("Receta no encontrada");
+  if (res.status === 404) throw new Error('No encontrada');
+  if (!res.ok) throw new Error('No autorizado');
 
   return res.json();
 }
