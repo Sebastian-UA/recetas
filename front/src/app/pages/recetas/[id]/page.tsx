@@ -1,60 +1,65 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { getRecetaById } from "@/apis/receta.api";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { getRecetaById } from '../../../../apis/receta.api';
 
 export default function RecetaDetallePage() {
   const params = useParams();
   const router = useRouter();
-  const { id } = params as { id: string };
 
   const [receta, setReceta] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!id) return;
-
-    const cargarReceta = async () => {
+    async function cargar() {
       try {
-        const data = await getRecetaById(id);
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          router.push('/login');
+          return;
+        }
+
+        const id = Number(params.id);
+        const data = await getRecetaById(id, token);
+
         setReceta(data);
-      } catch (error) {
-        alert("Receta no encontrada");
-        router.push("/pages/recetas");
+      } catch (e: any) {
+        setError(e.message);
       } finally {
-        setLoading(false);
+        setCargando(false);
       }
-    };
+    }
 
-    cargarReceta();
-  }, [id]);
+    cargar();
+  }, [params.id]);
 
-  if (loading) {
-    return <p className="p-6">Cargando...</p>;
-  }
-
-  if (!receta) {
-    return null;
-  }
+  if (cargando) return <p>Cargando receta...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!receta) return <p>No existe esa receta</p>;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <Button variant="outline" onClick={() => router.back()}>
-        ← Volver
-      </Button>
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-3">{receta.nombre}</h1>
 
-      <div className="mt-6">
-        {receta.imagen && (
-          <img
-            src={receta.imagen}
-            className="w-full max-h-[400px] object-cover rounded"
-          />
-        )}
+      {receta.imagen && (
+        <img
+          src={receta.imagen}
+          className="w-60 mb-3"
+          alt="imagen"
+        />
+      )}
 
-        <h1 className="text-3xl font-bold mt-4">{receta.nombre}</h1>
-      </div>
+      <p>Creada por: {receta.usuario?.correo}</p>
+
+      <button
+        className="mt-4 bg-blue-500 text-white px-3 py-1 rounded"
+        onClick={() => router.push('/recetas')}
+      >
+        Volver
+      </button>
     </div>
   );
 }
