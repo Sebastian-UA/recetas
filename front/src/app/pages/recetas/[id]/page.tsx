@@ -101,6 +101,12 @@ export default function RecetaDetallePage() {
   }
 
   async function eliminarIngrediente(riId: number) {
+    const confirmar = window.confirm(
+      '¿Estás seguro de eliminar este ingrediente de la receta?'
+    );
+
+    if (!confirmar) return;
+
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
@@ -120,6 +126,7 @@ export default function RecetaDetallePage() {
       alert(e.message);
     }
   }
+
 
 
   if (cargando) return <p>Cargando receta...</p>;
@@ -217,7 +224,7 @@ export default function RecetaDetallePage() {
 
       <button
         className="mt-4 ml-2 bg-gray-500 text-white px-3 py-1 rounded"
-        onClick={() => router.push('/recetas')}
+        onClick={() => router.push('/pages/recetas')}
       >
         Volver
       </button>
