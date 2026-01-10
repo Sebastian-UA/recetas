@@ -96,4 +96,39 @@ export class RecetaService {
     });
   }
 
+  async updateIngrediente(
+    recetaIngredienteId: number,
+    usuarioId: number,
+    dto: { nombre: string; cantidad: string },
+  ) {
+    // verificar que pertenece al usuario
+    const ri = await this.prisma.receta_ingrediente.findFirst({
+      where: {
+        id: recetaIngredienteId,
+        receta: {
+          usuario_id: usuarioId,
+        },
+      },
+      include: { ingrediente: true },
+    });
+
+    if (!ri) {
+      throw new Error('Ingrediente no encontrado');
+    }
+
+    // actualizar nombre del ingrediente
+    await this.prisma.ingrediente.update({
+      where: { id: ri.ingrediente_id },
+      data: { nombre: dto.nombre },
+    });
+
+    // actualizar cantidad
+    return this.prisma.receta_ingrediente.update({
+      where: { id: recetaIngredienteId },
+      data: { cantidad: dto.cantidad },
+      include: { ingrediente: true },
+    });
+  }
+
+
 }

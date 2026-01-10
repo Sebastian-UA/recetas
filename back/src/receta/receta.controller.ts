@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Delete,
@@ -14,6 +15,7 @@ import { CreateRecetaDto } from './dto/create-receta.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { JwtRequest } from '../auth/jwt-request.interface';
 import { AddIngredienteDto } from './dto/add-ingrediente.dto';
+import { UpdateIngredienteDto } from './dto/update-ingrediente.dto';
 
 @Controller('receta')
 @UseGuards(JwtAuthGuard)
@@ -48,6 +50,19 @@ export class RecetaController {
     @Req() req: JwtRequest,
   ) {
     return this.recetaService.addIngrediente(
+      +id,
+      req.user.id,
+      dto,
+    );
+  }
+
+  @Patch('ingrediente/:id')
+  updateIngrediente(
+    @Param('id') id: string,
+    @Body() dto: UpdateIngredienteDto,
+    @Req() req: JwtRequest,
+  ) {
+    return this.recetaService.updateIngrediente(
       +id,
       req.user.id,
       dto,
