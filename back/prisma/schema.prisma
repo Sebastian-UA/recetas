@@ -48,7 +48,7 @@ model pasos{
 
 model ingrediente{
   id Int @id @default(autoincrement())
-  nombre String
+  nombre String @unique
 
   receta_ingrediente receta_ingrediente[]
 
