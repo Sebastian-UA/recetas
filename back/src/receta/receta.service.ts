@@ -4,7 +4,7 @@ import { CreateRecetaDto } from './dto/create-receta.dto';
 
 @Injectable()
 export class RecetaService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   // Crear receta del usuario logueado
   async create(dto: CreateRecetaDto, usuarioId: number) {
@@ -38,8 +38,16 @@ export class RecetaService {
         id,
         usuario_id: usuarioId,
       },
+      include: {
+        receta_ingrediente: {
+          include: {
+            ingrediente: true,
+          },
+        },
+      },
     });
   }
+
 
   // Eliminar SOLO si es mía
   async remove(id: number, usuarioId: number) {
@@ -50,4 +58,42 @@ export class RecetaService {
       },
     });
   }
+
+  async addIngrediente(
+    recetaId: number,
+    usuarioId: number,
+    dto: { nombre: string; cantidad: string },
+  ) {
+    // 1️⃣ verificar que la receta es del usuario
+    const receta = await this.prisma.receta.findFirst({
+      where: {
+        id: recetaId,
+        usuario_id: usuarioId,
+      },
+    });
+
+    if (!receta) {
+      throw new Error('Receta no encontrada');
+    }
+
+    // 2️⃣ buscar o crear ingrediente
+    const ingrediente = await this.prisma.ingrediente.upsert({
+      where: { nombre: dto.nombre },
+      update: {},
+      create: { nombre: dto.nombre },
+    });
+
+    // 3️⃣ crear relación
+    return this.prisma.receta_ingrediente.create({
+      data: {
+        receta_id: recetaId,
+        ingrediente_id: ingrediente.id,
+        cantidad: dto.cantidad,
+      },
+      include: {
+        ingrediente: true,
+      },
+    });
+  }
+
 }
