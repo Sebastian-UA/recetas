@@ -87,3 +87,27 @@ export async function addIngrediente(
 
   return res.json();
 }
+
+
+export async function updateIngrediente(
+  recetaIngredienteId: number,
+  data: { nombre: string; cantidad: string },
+) {
+  const token = localStorage.getItem('token');
+
+  const res = await fetch(
+    `http://localhost:4000/api/receta/ingrediente/${recetaIngredienteId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    },
+  );
+
+  if (!res.ok) throw new Error('No se pudo actualizar');
+
+  return res.json();
+}
