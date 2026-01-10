@@ -6,6 +6,7 @@ import {
   getRecetaById,
   addIngrediente,
   updateIngrediente,
+  deleteIngrediente,
 } from '../../../../apis/receta.api';
 
 export default function RecetaDetallePage() {
@@ -16,13 +17,13 @@ export default function RecetaDetallePage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  // 🔹 agregar ingrediente
+  // agregar ingrediente
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nombreIngrediente, setNombreIngrediente] = useState('');
   const [cantidad, setCantidad] = useState('');
   const [guardando, setGuardando] = useState(false);
 
-  // 🔹 editar ingrediente
+  // editar ingrediente
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [nombreEditado, setNombreEditado] = useState('');
   const [cantidadEditada, setCantidadEditada] = useState('');
@@ -47,11 +48,8 @@ export default function RecetaDetallePage() {
     }
 
     cargar();
-  }, [params.id, router]);
+  }, [params.id]);
 
-  // =========================
-  // AGREGAR INGREDIENTE
-  // =========================
   async function guardarIngrediente() {
     if (!nombreIngrediente || !cantidad) {
       alert('Completa todos los campos');
@@ -69,7 +67,7 @@ export default function RecetaDetallePage() {
 
       setReceta((prev: any) => ({
         ...prev,
-        receta_ingrediente: [...(prev.receta_ingrediente ?? []), nuevo],
+        receta_ingrediente: [...prev.receta_ingrediente, nuevo],
       }));
 
       setNombreIngrediente('');
@@ -82,15 +80,7 @@ export default function RecetaDetallePage() {
     }
   }
 
-  // =========================
-  // GUARDAR EDICIÓN
-  // =========================
   async function guardarEdicion(riId: number) {
-    if (!nombreEditado || !cantidadEditada) {
-      alert('Completa todos los campos');
-      return;
-    }
-
     try {
       const actualizado = await updateIngrediente(riId, {
         nombre: nombreEditado,
@@ -100,17 +90,37 @@ export default function RecetaDetallePage() {
       setReceta((prev: any) => ({
         ...prev,
         receta_ingrediente: prev.receta_ingrediente.map((ri: any) =>
-          ri.id === riId ? actualizado : ri,
+          ri.id === riId ? actualizado : ri
         ),
       }));
 
       setEditandoId(null);
-      setNombreEditado('');
-      setCantidadEditada('');
     } catch (e: any) {
       alert(e.message);
     }
   }
+
+  async function eliminarIngrediente(riId: number) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      await deleteIngrediente(riId, token);
+
+      setReceta((prev: any) => ({
+        ...prev,
+        receta_ingrediente: prev.receta_ingrediente.filter(
+          (ri: any) => ri.id !== riId
+        ),
+      }));
+    } catch (e: any) {
+      alert(e.message);
+    }
+  }
+
 
   if (cargando) return <p>Cargando receta...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -121,38 +131,37 @@ export default function RecetaDetallePage() {
       <h1 className="text-2xl font-bold mb-3">{receta.nombre}</h1>
 
       {receta.imagen && (
-        <img
-          src={receta.imagen}
-          className="w-60 mb-4 rounded"
-          alt="imagen"
-        />
+        <img src={receta.imagen} className="w-60 mb-4 rounded" />
       )}
 
-      {/* INGREDIENTES */}
       <h2 className="text-lg font-semibold mb-2">Ingredientes</h2>
 
-      {receta.receta_ingrediente?.length === 0 && (
+      {receta.receta_ingrediente.length === 0 && (
         <p className="text-gray-500">No hay ingredientes aún</p>
       )}
 
       <ul className="space-y-2">
-        {receta.receta_ingrediente?.map((ri: any) => (
+        {receta.receta_ingrediente.map((ri: any) => (
           <li key={ri.id} className="border p-2 rounded">
             {editandoId === ri.id ? (
-              <div className="flex flex-col gap-2">
+              <>
                 <input
-                  className="border p-1"
+                  className="border p-1 mb-1 w-full"
                   value={nombreEditado}
-                  onChange={(e) => setNombreEditado(e.target.value)}
+                  onChange={(e) =>
+                    setNombreEditado(e.target.value)
+                  }
                 />
 
                 <input
-                  className="border p-1"
+                  className="border p-1 w-full"
                   value={cantidadEditada}
-                  onChange={(e) => setCantidadEditada(e.target.value)}
+                  onChange={(e) =>
+                    setCantidadEditada(e.target.value)
+                  }
                 />
 
-                <div className="flex gap-2">
+                <div className="mt-2 flex gap-2">
                   <button
                     className="bg-blue-600 text-white px-2 rounded"
                     onClick={() => guardarEdicion(ri.id)}
@@ -167,30 +176,38 @@ export default function RecetaDetallePage() {
                     Cancelar
                   </button>
                 </div>
-              </div>
+              </>
             ) : (
               <>
                 <strong>{ri.ingrediente.nombre}</strong>
                 {' — '}
                 {ri.cantidad}
 
-                <button
-                  className="ml-3 text-sm text-blue-600"
-                  onClick={() => {
-                    setEditandoId(ri.id);
-                    setNombreEditado(ri.ingrediente.nombre);
-                    setCantidadEditada(ri.cantidad);
-                  }}
-                >
-                  Editar
-                </button>
+                <div className="mt-1 flex gap-3">
+                  <button
+                    className="text-sm text-blue-600"
+                    onClick={() => {
+                      setEditandoId(ri.id);
+                      setNombreEditado(ri.ingrediente.nombre);
+                      setCantidadEditada(ri.cantidad);
+                    }}
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    className="text-sm text-red-600"
+                    onClick={() => eliminarIngrediente(ri.id)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </>
             )}
           </li>
         ))}
       </ul>
 
-      {/* BOTONES */}
       <button
         className="mt-4 bg-green-600 text-white px-3 py-1 rounded"
         onClick={() => setMostrarModal(true)}
@@ -200,12 +217,12 @@ export default function RecetaDetallePage() {
 
       <button
         className="mt-4 ml-2 bg-gray-500 text-white px-3 py-1 rounded"
-        onClick={() => router.push('/pages/recetas')}
+        onClick={() => router.push('/recetas')}
       >
         Volver
       </button>
 
-      {/* MODAL */}
+      {/* MODAL AGREGAR */}
       {mostrarModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white p-4 rounded w-80">
@@ -217,7 +234,9 @@ export default function RecetaDetallePage() {
               className="border w-full p-1 mb-2"
               placeholder="Ingrediente"
               value={nombreIngrediente}
-              onChange={(e) => setNombreIngrediente(e.target.value)}
+              onChange={(e) =>
+                setNombreIngrediente(e.target.value)
+              }
             />
 
             <input
@@ -237,8 +256,8 @@ export default function RecetaDetallePage() {
 
               <button
                 className="bg-blue-600 text-white px-3 py-1 rounded"
-                disabled={guardando}
                 onClick={guardarIngrediente}
+                disabled={guardando}
               >
                 Guardar
               </button>

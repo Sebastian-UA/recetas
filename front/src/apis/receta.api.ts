@@ -111,3 +111,25 @@ export async function updateIngrediente(
 
   return res.json();
 }
+
+export async function deleteIngrediente(
+  recetaIngredienteId: number,
+  token: string,
+) {
+  const res = await fetch(
+    `http://localhost:4000/api/receta/ingrediente/${recetaIngredienteId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error('Error al eliminar el ingrediente');
+  }
+
+  return res.json();
+}
+

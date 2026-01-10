@@ -69,4 +69,15 @@ export class RecetaController {
     );
   }
 
+  @Delete('ingrediente/:id')
+  deleteIngrediente(
+    @Param('id') id: string,
+    @Req() req: JwtRequest,
+  ) {
+    return this.recetaService.deleteIngrediente(
+      Number(id),
+      req.user.id,
+    );
+  }
+
 }
