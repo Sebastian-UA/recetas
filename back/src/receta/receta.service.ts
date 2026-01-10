@@ -130,5 +130,32 @@ export class RecetaService {
     });
   }
 
+  async deleteIngrediente(
+    recetaIngredienteId: number,
+    usuarioId: number,
+  ) {
+    // verificar que el ingrediente pertenece a una receta del usuario
+    const ri = await this.prisma.receta_ingrediente.findFirst({
+      where: {
+        id: recetaIngredienteId,
+        receta: {
+          usuario_id: usuarioId,
+        },
+      },
+    });
+
+    if (!ri) {
+      throw new Error('Ingrediente no encontrado');
+    }
+
+    // eliminar solo la relación receta_ingrediente
+    await this.prisma.receta_ingrediente.delete({
+      where: {
+        id: recetaIngredienteId,
+      },
+    });
+
+    return { message: 'Ingrediente eliminado de la receta' };
+  }
 
 }
