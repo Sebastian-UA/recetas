@@ -7,6 +7,7 @@ import {
   addIngrediente,
   updateIngrediente,
   deleteIngrediente,
+  addPaso,
 } from '../../../../apis/receta.api';
 
 export default function RecetaDetallePage() {
@@ -17,16 +18,24 @@ export default function RecetaDetallePage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  // agregar ingrediente
+  /* ================= INGREDIENTES ================= */
+
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nombreIngrediente, setNombreIngrediente] = useState('');
   const [cantidad, setCantidad] = useState('');
   const [guardando, setGuardando] = useState(false);
 
-  // editar ingrediente
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [nombreEditado, setNombreEditado] = useState('');
   const [cantidadEditada, setCantidadEditada] = useState('');
+
+  /* ================= PASOS ================= */
+
+  const [mostrarModalPaso, setMostrarModalPaso] = useState(false);
+  const [textoPaso, setTextoPaso] = useState('');
+  const [guardandoPaso, setGuardandoPaso] = useState(false);
+
+  /* ================= CARGA ================= */
 
   useEffect(() => {
     async function cargar() {
@@ -49,6 +58,8 @@ export default function RecetaDetallePage() {
 
     cargar();
   }, [params.id]);
+
+  /* ================= INGREDIENTES ================= */
 
   async function guardarIngrediente() {
     if (!nombreIngrediente || !cantidad) {
@@ -104,14 +115,10 @@ export default function RecetaDetallePage() {
     const confirmar = window.confirm(
       '¿Estás seguro de eliminar este ingrediente de la receta?'
     );
-
     if (!confirmar) return;
 
     const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
+    if (!token) return;
 
     try {
       await deleteIngrediente(riId, token);
@@ -127,7 +134,41 @@ export default function RecetaDetallePage() {
     }
   }
 
+  /* ================= PASOS ================= */
 
+  async function guardarPaso() {
+    if (!textoPaso.trim()) {
+      alert('Escribe el paso');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      setGuardandoPaso(true);
+
+      const nuevo = await addPaso(
+        Number(params.id),
+        textoPaso,
+        token
+      );
+
+      setReceta((prev: any) => ({
+        ...prev,
+        pasos: [...(prev.pasos ?? []), nuevo],
+      }));
+
+      setTextoPaso('');
+      setMostrarModalPaso(false);
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setGuardandoPaso(false);
+    }
+  }
+
+  /* ================= RENDER ================= */
 
   if (cargando) return <p>Cargando receta...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -140,6 +181,8 @@ export default function RecetaDetallePage() {
       {receta.imagen && (
         <img src={receta.imagen} className="w-60 mb-4 rounded" />
       )}
+
+      {/* ================= INGREDIENTES ================= */}
 
       <h2 className="text-lg font-semibold mb-2">Ingredientes</h2>
 
@@ -222,6 +265,31 @@ export default function RecetaDetallePage() {
         Agregar ingrediente
       </button>
 
+      {/* ================= PASOS ================= */}
+
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        Pasos
+      </h2>
+
+      {(!receta.pasos || receta.pasos.length === 0) && (
+        <p className="text-gray-500">No hay pasos aún</p>
+      )}
+
+      <ol className="list-decimal ml-6 space-y-2">
+        {receta.pasos?.map((p: any) => (
+          <li key={p.id} className="border p-2 rounded">
+            {p.pasos}
+          </li>
+        ))}
+      </ol>
+
+      <button
+        className="mt-4 bg-green-600 text-white px-3 py-1 rounded"
+        onClick={() => setMostrarModalPaso(true)}
+      >
+        Agregar paso
+      </button>
+
       <button
         className="mt-4 ml-2 bg-gray-500 text-white px-3 py-1 rounded"
         onClick={() => router.push('/pages/recetas')}
@@ -229,7 +297,8 @@ export default function RecetaDetallePage() {
         Volver
       </button>
 
-      {/* MODAL AGREGAR */}
+      {/* ================= MODAL INGREDIENTE ================= */}
+
       {mostrarModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white p-4 rounded w-80">
@@ -265,6 +334,43 @@ export default function RecetaDetallePage() {
                 className="bg-blue-600 text-white px-3 py-1 rounded"
                 onClick={guardarIngrediente}
                 disabled={guardando}
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL PASO ================= */}
+
+      {mostrarModalPaso && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded w-96">
+            <h3 className="text-lg font-bold mb-3">
+              Nuevo paso
+            </h3>
+
+            <textarea
+              className="border w-full p-2 mb-3"
+              rows={4}
+              placeholder="Describe el paso"
+              value={textoPaso}
+              onChange={(e) => setTextoPaso(e.target.value)}
+            />
+
+            <div className="flex justify-end gap-2">
+              <button
+                className="border px-3 py-1 rounded"
+                onClick={() => setMostrarModalPaso(false)}
+              >
+                Cancelar
+              </button>
+
+              <button
+                className="bg-blue-600 text-white px-3 py-1 rounded"
+                onClick={guardarPaso}
+                disabled={guardandoPaso}
               >
                 Guardar
               </button>

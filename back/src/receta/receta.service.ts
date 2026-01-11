@@ -40,14 +40,14 @@ export class RecetaService {
       },
       include: {
         receta_ingrediente: {
-          include: {
-            ingrediente: true,
-          },
+          include: { ingrediente: true },
+        },
+        pasos: {
+          orderBy: { createdAt: 'asc' }, // 👈 ORDENADOS
         },
       },
     });
   }
-
 
   // Eliminar SOLO si es mía
   async remove(id: number, usuarioId: number) {
@@ -157,5 +157,31 @@ export class RecetaService {
 
     return { message: 'Ingrediente eliminado de la receta' };
   }
+
+  async addPaso(
+    recetaId: number,
+    usuarioId: number,
+    dto: { pasos: string },
+  ) {
+    // verificar que la receta sea del usuario
+    const receta = await this.prisma.receta.findFirst({
+      where: {
+        id: recetaId,
+        usuario_id: usuarioId,
+      },
+    });
+
+    if (!receta) {
+      throw new Error('Receta no encontrada');
+    }
+
+    return this.prisma.pasos.create({
+      data: {
+        receta_id: recetaId,
+        pasos: dto.pasos,
+      },
+    });
+  }
+
 
 }

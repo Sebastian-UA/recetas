@@ -80,4 +80,17 @@ export class RecetaController {
     );
   }
 
+  @Post(':id/paso')
+  addPaso(
+    @Param('id') id: string,
+    @Body() dto: { pasos: string },
+    @Req() req: JwtRequest,
+  ) {
+    return this.recetaService.addPaso(
+      +id,
+      req.user.id,
+      dto,
+    );
+  }
+
 }

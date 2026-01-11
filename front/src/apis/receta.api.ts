@@ -133,3 +133,26 @@ export async function deleteIngrediente(
   return res.json();
 }
 
+export async function addPaso(
+  recetaId: number,
+  pasos: string,
+  token: string,
+) {
+  const res = await fetch(
+    `${API_URL}/receta/${recetaId}/paso`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ pasos }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Error al agregar paso');
+  }
+
+  return res.json();
+}
