@@ -20,6 +20,64 @@ export class RecetaService {
     });
   }
 
+  async update(
+    recetaId: number,
+    usuarioId: number,
+    dto: { nombre?: string; imagen?: string },
+  ) {
+    // verificar que la receta sea del usuario
+    const receta = await this.prisma.receta.findFirst({
+      where: {
+        id: recetaId,
+        usuario_id: usuarioId,
+      },
+    });
+
+    if (!receta) {
+      throw new Error('Receta no encontrada');
+    }
+
+    return this.prisma.receta.update({
+      where: { id: recetaId },
+      data: {
+        nombre: dto.nombre,
+        imagen: dto.imagen,
+      },
+    });
+  }
+
+  async delete(recetaId: number, usuarioId: number) {
+    const receta = await this.prisma.receta.findFirst({
+      where: {
+        id: recetaId,
+        usuario_id: usuarioId,
+      },
+    });
+
+    if (!receta) {
+      throw new Error('Receta no encontrada');
+    }
+
+    // borrar pasos
+    await this.prisma.pasos.deleteMany({
+      where: { receta_id: recetaId },
+    });
+
+    // borrar ingredientes asociados
+    await this.prisma.receta_ingrediente.deleteMany({
+      where: { receta_id: recetaId },
+    });
+
+    // borrar receta
+    await this.prisma.receta.delete({
+      where: { id: recetaId },
+    });
+
+    return { message: 'Receta eliminada correctamente' };
+  }
+
+
+
   // Obtener SOLO mis recetas
   async findByUsuario(usuarioId: number) {
     return this.prisma.receta.findMany({

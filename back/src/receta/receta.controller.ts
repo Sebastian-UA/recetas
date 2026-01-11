@@ -17,6 +17,7 @@ import { JwtRequest } from '../auth/jwt-request.interface';
 import { AddIngredienteDto } from './dto/add-ingrediente.dto';
 import { UpdateIngredienteDto } from './dto/update-ingrediente.dto';
 import { UpdatePasoDto } from './dto/update-pasos.dto';
+import { UpdateRecetaDto } from './dto/update-receta.dto';
 
 @Controller('receta')
 @UseGuards(JwtAuthGuard)
@@ -32,6 +33,32 @@ export class RecetaController {
   findMisRecetas(@Req() req: JwtRequest) {
     return this.recetaService.findByUsuario(req.user.id);
   }
+
+  @Patch(':id')
+  updateReceta(
+    @Param('id') id: string,
+    @Body() dto: UpdateRecetaDto,
+    @Req() req: JwtRequest,
+  ) {
+    return this.recetaService.update(
+      Number(id),
+      req.user.id,
+      dto,
+    );
+  }
+
+  @Delete(':id')
+  deleteReceta(
+    @Param('id') id: string,
+    @Req() req: JwtRequest,
+  ) {
+    return this.recetaService.delete(
+      Number(id),
+      req.user.id,
+    );
+  }
+
+
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Req() req: JwtRequest) {

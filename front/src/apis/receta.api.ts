@@ -55,6 +55,54 @@ export async function createReceta(data: {
   return res.json();
 }
 
+export async function updateReceta(
+  recetaId: number,
+  data: { nombre: string; imagen?: string }
+) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No autorizado");
+
+  const res = await fetch(
+    `http://localhost:4000/api/receta/${recetaId}`,
+    {
+      method: "PATCH", // 👈 importante
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Error al actualizar receta");
+  }
+
+  return res.json();
+}
+
+export async function deleteReceta(recetaId: number) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No autorizado");
+
+  const res = await fetch(
+    `http://localhost:4000/api/receta/${recetaId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Error al eliminar la receta");
+  }
+
+  return res.json();
+}
+
+
 // =======================
 // INGREDIENTES
 // =======================
