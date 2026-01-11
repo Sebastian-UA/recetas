@@ -133,3 +133,80 @@ export async function deleteIngrediente(
   return res.json();
 }
 
+// =======================
+// PASOS
+// =======================
+
+export async function addPaso(
+  recetaId: number,
+  pasos: string,
+) {
+  const token = getToken();
+  if (!token) throw new Error('No autorizado');
+
+  const res = await fetch(
+    `${API_URL}/receta/${recetaId}/paso`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ pasos }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Error al agregar paso');
+  }
+
+  return res.json();
+}
+
+export async function updatePaso(
+  pasoId: number,
+  pasos: string,
+) {
+  const token = getToken();
+  if (!token) throw new Error('No autorizado');
+
+  const res = await fetch(
+    `${API_URL}/receta/paso/${pasoId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ pasos }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Error al actualizar paso');
+  }
+
+  return res.json();
+}
+
+export async function deletePaso(
+  pasoId: number,
+  token: string,
+) {
+  const res = await fetch(
+    `${API_URL}/receta/paso/${pasoId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Error al eliminar paso');
+  }
+
+  return res.json();
+}
+
