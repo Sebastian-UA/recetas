@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRecetaDto } from './dto/create-receta.dto';
+import { UpdatePasoDto } from './dto/update-pasos.dto';
 
 @Injectable()
 export class RecetaService {
@@ -163,11 +164,13 @@ export class RecetaService {
     usuarioId: number,
     dto: { pasos: string },
   ) {
-    // verificar que la receta sea del usuario
     const receta = await this.prisma.receta.findFirst({
       where: {
         id: recetaId,
         usuario_id: usuarioId,
+      },
+      include: {
+        pasos: true,
       },
     });
 
@@ -184,4 +187,56 @@ export class RecetaService {
   }
 
 
+  async updatePaso(
+    pasoId: number,
+    usuarioId: number,
+    dto: UpdatePasoDto,
+  ) {
+    const paso = await this.prisma.pasos.findFirst({
+      where: {
+        id: pasoId,
+        receta: {
+          usuario_id: usuarioId,
+        },
+      },
+    });
+
+    if (!paso) {
+      throw new Error('Paso no encontrado');
+    }
+
+    return this.prisma.pasos.update({
+      where: { id: pasoId },
+      data: {
+        pasos: dto.pasos,
+      },
+    });
+  }
+
+  async deletePaso(
+    pasoId: number,
+    usuarioId: number,
+  ) {
+    const paso = await this.prisma.pasos.findFirst({
+      where: {
+        id: pasoId,
+        receta: {
+          usuario_id: usuarioId,
+        },
+      },
+    });
+
+    if (!paso) {
+      throw new Error('Paso no encontrado');
+    }
+
+    await this.prisma.pasos.delete({
+      where: { id: pasoId },
+    });
+
+    return { message: 'Paso eliminado' };
+  }
+
+
 }
+

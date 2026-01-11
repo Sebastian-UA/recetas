@@ -8,6 +8,8 @@ import {
   updateIngrediente,
   deleteIngrediente,
   addPaso,
+  updatePaso,
+  deletePaso,
 } from '../../../../apis/receta.api';
 
 export default function RecetaDetallePage() {
@@ -35,6 +37,9 @@ export default function RecetaDetallePage() {
   const [textoPaso, setTextoPaso] = useState('');
   const [guardandoPaso, setGuardandoPaso] = useState(false);
 
+  const [editandoPasoId, setEditandoPasoId] = useState<number | null>(null);
+  const [textoPasoEditado, setTextoPasoEditado] = useState('');
+
   /* ================= CARGA ================= */
 
   useEffect(() => {
@@ -57,7 +62,7 @@ export default function RecetaDetallePage() {
     }
 
     cargar();
-  }, [params.id]);
+  }, [params.id, router]);
 
   /* ================= INGREDIENTES ================= */
 
@@ -142,16 +147,12 @@ export default function RecetaDetallePage() {
       return;
     }
 
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
     try {
       setGuardandoPaso(true);
 
       const nuevo = await addPaso(
         Number(params.id),
-        textoPaso,
-        token
+        textoPaso
       );
 
       setReceta((prev: any) => ({
@@ -167,6 +168,48 @@ export default function RecetaDetallePage() {
       setGuardandoPaso(false);
     }
   }
+
+  async function guardarEdicionPaso(pasoId: number) {
+    try {
+      const actualizado = await updatePaso(
+        pasoId,
+        textoPasoEditado
+      );
+
+      setReceta((prev: any) => ({
+        ...prev,
+        pasos: prev.pasos.map((p: any) =>
+          p.id === pasoId ? actualizado : p
+        ),
+      }));
+
+      setEditandoPasoId(null);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  }
+
+  async function eliminarPaso(pasoId: number) {
+    const confirmar = window.confirm(
+      '¿Estás seguro de eliminar este paso?'
+    );
+    if (!confirmar) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      await deletePaso(pasoId, token);
+
+      setReceta((prev: any) => ({
+        ...prev,
+        pasos: prev.pasos.filter((p: any) => p.id !== pasoId),
+      }));
+    } catch (e: any) {
+      alert(e.message);
+    }
+  }
+
 
   /* ================= RENDER ================= */
 
@@ -186,10 +229,6 @@ export default function RecetaDetallePage() {
 
       <h2 className="text-lg font-semibold mb-2">Ingredientes</h2>
 
-      {receta.receta_ingrediente.length === 0 && (
-        <p className="text-gray-500">No hay ingredientes aún</p>
-      )}
-
       <ul className="space-y-2">
         {receta.receta_ingrediente.map((ri: any) => (
           <li key={ri.id} className="border p-2 rounded">
@@ -198,17 +237,13 @@ export default function RecetaDetallePage() {
                 <input
                   className="border p-1 mb-1 w-full"
                   value={nombreEditado}
-                  onChange={(e) =>
-                    setNombreEditado(e.target.value)
-                  }
+                  onChange={(e) => setNombreEditado(e.target.value)}
                 />
 
                 <input
                   className="border p-1 w-full"
                   value={cantidadEditada}
-                  onChange={(e) =>
-                    setCantidadEditada(e.target.value)
-                  }
+                  onChange={(e) => setCantidadEditada(e.target.value)}
                 />
 
                 <div className="mt-2 flex gap-2">
@@ -218,7 +253,6 @@ export default function RecetaDetallePage() {
                   >
                     Guardar
                   </button>
-
                   <button
                     className="text-sm"
                     onClick={() => setEditandoId(null)}
@@ -229,10 +263,7 @@ export default function RecetaDetallePage() {
               </>
             ) : (
               <>
-                <strong>{ri.ingrediente.nombre}</strong>
-                {' — '}
-                {ri.cantidad}
-
+                <strong>{ri.ingrediente.nombre}</strong> — {ri.cantidad}
                 <div className="mt-1 flex gap-3">
                   <button
                     className="text-sm text-blue-600"
@@ -244,7 +275,6 @@ export default function RecetaDetallePage() {
                   >
                     Editar
                   </button>
-
                   <button
                     className="text-sm text-red-600"
                     onClick={() => eliminarIngrediente(ri.id)}
@@ -267,18 +297,56 @@ export default function RecetaDetallePage() {
 
       {/* ================= PASOS ================= */}
 
-      <h2 className="text-lg font-semibold mt-6 mb-2">
-        Pasos
-      </h2>
-
-      {(!receta.pasos || receta.pasos.length === 0) && (
-        <p className="text-gray-500">No hay pasos aún</p>
-      )}
+      <h2 className="text-lg font-semibold mt-6 mb-2">Pasos</h2>
 
       <ol className="list-decimal ml-6 space-y-2">
         {receta.pasos?.map((p: any) => (
           <li key={p.id} className="border p-2 rounded">
-            {p.pasos}
+            {editandoPasoId === p.id ? (
+              <>
+                <textarea
+                  className="border w-full p-2 mb-2"
+                  value={textoPasoEditado}
+                  onChange={(e) => setTextoPasoEditado(e.target.value)}
+                />
+
+                <div className="flex gap-2">
+                  <button
+                    className="bg-blue-600 text-white px-2 rounded"
+                    onClick={() => guardarEdicionPaso(p.id)}
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    className="text-sm"
+                    onClick={() => setEditandoPasoId(null)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p>{p.pasos}</p>
+                <div className="mt-2 flex gap-3">
+                  <button
+                    className="text-sm text-blue-600"
+                    onClick={() => {
+                      setEditandoPasoId(p.id);
+                      setTextoPasoEditado(p.pasos);
+                    }}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="text-sm text-red-600"
+                    onClick={() => eliminarPaso(p.id)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
       </ol>
@@ -290,29 +358,18 @@ export default function RecetaDetallePage() {
         Agregar paso
       </button>
 
-      <button
-        className="mt-4 ml-2 bg-gray-500 text-white px-3 py-1 rounded"
-        onClick={() => router.push('/pages/recetas')}
-      >
-        Volver
-      </button>
-
-      {/* ================= MODAL INGREDIENTE ================= */}
+      {/* ================= MODALES ================= */}
 
       {mostrarModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white p-4 rounded w-80">
-            <h3 className="text-lg font-bold mb-3">
-              Nuevo ingrediente
-            </h3>
+            <h3 className="text-lg font-bold mb-3">Nuevo ingrediente</h3>
 
             <input
               className="border w-full p-1 mb-2"
               placeholder="Ingrediente"
               value={nombreIngrediente}
-              onChange={(e) =>
-                setNombreIngrediente(e.target.value)
-              }
+              onChange={(e) => setNombreIngrediente(e.target.value)}
             />
 
             <input
@@ -323,57 +380,30 @@ export default function RecetaDetallePage() {
             />
 
             <div className="flex justify-end gap-2">
-              <button
-                className="border px-3 py-1 rounded"
-                onClick={() => setMostrarModal(false)}
-              >
-                Cancelar
-              </button>
-
-              <button
-                className="bg-blue-600 text-white px-3 py-1 rounded"
-                onClick={guardarIngrediente}
-                disabled={guardando}
-              >
-                Guardar
-              </button>
+              <button onClick={() => setMostrarModal(false)}>Cancelar</button>
+              <button onClick={guardarIngrediente}>Guardar</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ================= MODAL PASO ================= */}
-
       {mostrarModalPaso && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white p-4 rounded w-96">
-            <h3 className="text-lg font-bold mb-3">
-              Nuevo paso
-            </h3>
+            <h3 className="text-lg font-bold mb-3">Nuevo paso</h3>
 
             <textarea
               className="border w-full p-2 mb-3"
               rows={4}
-              placeholder="Describe el paso"
               value={textoPaso}
               onChange={(e) => setTextoPaso(e.target.value)}
             />
 
             <div className="flex justify-end gap-2">
-              <button
-                className="border px-3 py-1 rounded"
-                onClick={() => setMostrarModalPaso(false)}
-              >
+              <button onClick={() => setMostrarModalPaso(false)}>
                 Cancelar
               </button>
-
-              <button
-                className="bg-blue-600 text-white px-3 py-1 rounded"
-                onClick={guardarPaso}
-                disabled={guardandoPaso}
-              >
-                Guardar
-              </button>
+              <button onClick={guardarPaso}>Guardar</button>
             </div>
           </div>
         </div>
