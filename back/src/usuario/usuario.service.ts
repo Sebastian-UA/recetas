@@ -64,18 +64,19 @@ export class UsuarioService {
     return usuario;
   }
 
-  async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    const usuario = await this.prismaService.usuario.update({
-      where: { id },
-      data: updateUsuarioDto,
-    });
+  async update(id: number, dto: UpdateUsuarioDto) {
+    const data: any = { ...dto };
 
-    if (!usuario) {
-      throw new NotFoundException(`El usuario ${id} no existe`);
+    if (dto.contraseña) {
+      data.contraseña = await bcrypt.hash(dto.contraseña, 10);
     }
 
-    return usuario;
+    return this.prismaService.usuario.update({
+      where: { id },
+      data,
+    });
   }
+
 
   async remove(id: number) {
     const usuario = await this.prismaService.usuario.delete({
@@ -98,10 +99,19 @@ export class UsuarioService {
       throw new NotFoundException('Usuario no existe');
     }
 
-    if (usuario.contraseña !== contraseña) {
+    const passwordOk = await bcrypt.compare(
+      contraseña,
+      usuario.contraseña
+    );
+
+    if (!passwordOk) {
       throw new ConflictException('Contraseña incorrecta');
     }
 
-    return usuario; // 👈 SOLO el usuario
+    // ❗ nunca devuelvas la contraseña
+    const { contraseña: _, ...usuarioSinPassword } = usuario;
+
+    return usuarioSinPassword;
   }
+
 }
