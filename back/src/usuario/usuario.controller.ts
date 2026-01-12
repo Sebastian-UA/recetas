@@ -7,7 +7,7 @@ import { AuthService } from 'src/auth/auth.service';
 @Controller('usuario')
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService,
-  private readonly authService: AuthService, // 👈 FALTABA
+    private readonly authService: AuthService, // 👈 FALTABA
   ) { }
 
   @Post()
@@ -25,7 +25,10 @@ export class UsuarioController {
     return this.authService.login(usuario);
   }
 
-
+  @Post("register")
+  register(@Body() dto: CreateUsuarioDto) {
+    return this.usuarioService.create(dto);
+  }
 
   @Get()
   findAll() {
