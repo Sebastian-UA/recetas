@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { login } from "@/apis/auth.api";
+import RegisterModal from "@/components/ui/register_modal";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [correo, setCorreo] = useState("");
   const [contraseña, setContraseña] = useState("");
+  const [showRegister, setShowRegister] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +28,6 @@ export default function LoginPage() {
     try {
       const data = await login(correo, contraseña);
 
-      // ✅ GUARDAR CORRECTAMENTE
       localStorage.setItem("token", data.token);
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
@@ -35,8 +36,6 @@ export default function LoginPage() {
       alert("Correo o contraseña incorrectos");
     }
   };
-
-
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -67,13 +66,28 @@ export default function LoginPage() {
             </div>
           </CardContent>
 
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-3">
             <Button type="submit" className="w-full">
               Entrar
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setShowRegister(true)}
+            >
+              Crear cuenta
             </Button>
           </CardFooter>
         </form>
       </Card>
+
+      {/* MODAL REGISTRO */}
+      <RegisterModal
+        open={showRegister}
+        onClose={() => setShowRegister(false)}
+      />
     </div>
   );
 }

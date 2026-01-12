@@ -1,33 +1,93 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
+  constructor(private prismaService: PrismaService) { }
 
-  constructor(
-    private prismaService: PrismaService ,) { }
-
-
+  // 🔹 REGISTRO
   async create(createUsuarioDto: CreateUsuarioDto) {
     try {
+      const hash = await bcrypt.hash(createUsuarioDto.contraseña, 10);
+
       return await this.prismaService.usuario.create({
-        data: createUsuarioDto
+        data: {
+          correo: createUsuarioDto.correo,
+          nombre: createUsuarioDto.nombre,
+          contraseña: hash,
+        },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === "p2002") {
-          throw new ConflictException(`el correo ${createUsuarioDto.correo} ya existe`);
+        if (error.code === 'P2002') {
+          throw new ConflictException(
+            `El correo ${createUsuarioDto.correo} ya existe`,
+          );
         }
       }
+      throw error;
     }
   }
 
   findAll() {
-    return this.prismaService.usuario.findMany({})
+    return this.prismaService.usuario.findMany({
+      select: {
+        id: true,
+        correo: true,
+        nombre: true,
+      },
+    });
+  }
+
+  async findOne(id: number) {
+    const usuario = await this.prismaService.usuario.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        correo: true,
+        nombre: true,
+      },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException(`El usuario ${id} no existe`);
+    }
+
+    return usuario;
+  }
+
+  async update(id: number, dto: UpdateUsuarioDto) {
+    const data: any = { ...dto };
+
+    if (dto.contraseña) {
+      data.contraseña = await bcrypt.hash(dto.contraseña, 10);
+    }
+
+    return this.prismaService.usuario.update({
+      where: { id },
+      data,
+    });
+  }
+
+
+  async remove(id: number) {
+    const usuario = await this.prismaService.usuario.delete({
+      where: { id },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException(`El usuario ${id} no existe`);
+    }
+
+    return usuario;
   }
 
   async login(correo: string, contraseña: string) {
@@ -39,51 +99,19 @@ export class UsuarioService {
       throw new NotFoundException('Usuario no existe');
     }
 
-    if (usuario.contraseña !== contraseña) {
+    const passwordOk = await bcrypt.compare(
+      contraseña,
+      usuario.contraseña
+    );
+
+    if (!passwordOk) {
       throw new ConflictException('Contraseña incorrecta');
     }
 
-    return usuario; // 👈 SOLO el usuario
+    // ❗ nunca devuelvas la contraseña
+    const { contraseña: _, ...usuarioSinPassword } = usuario;
+
+    return usuarioSinPassword;
   }
 
-
-  async findOne(id: number) {
-    const usuarioFound = await this.prismaService.usuario.findUnique({
-      where: {
-        id: id
-      }
-    })
-    if (!usuarioFound) {
-      throw new NotFoundException(`el usuario ${id} no existe `);
-    }
-
-    return usuarioFound;
-  }
-
-  async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    const ActualUsuario = await this.prismaService.usuario.update({
-      where: {
-        id
-      },
-      data: {
-
-      }
-    })
-    if (!ActualUsuario) {
-      throw new NotFoundException(`el usuario ${id} no existe `);
-    }
-    return ActualUsuario
-  }
-
-  async remove(id: number) {
-    const borrarUsuario = await this.prismaService.usuario.delete({
-      where: {
-        id
-      }
-    })
-    if (!borrarUsuario) {
-      throw new NotFoundException(`el usuario ${id} no existe `);
-    }
-    return borrarUsuario
-  }
 }

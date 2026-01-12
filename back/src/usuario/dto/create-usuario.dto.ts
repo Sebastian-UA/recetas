@@ -1,4 +1,13 @@
-//export class CreateUsuarioDto {}
+import { IsEmail, IsString, MinLength } from 'class-validator';
 
-import {usuario } from "@prisma/client";
-export type CreateUsuarioDto =Omit<usuario,'id'|'createdAd'|'updateAd'>
+export class CreateUsuarioDto {
+  @IsEmail()
+  correo!: string;
+
+  @IsString()
+  nombre!: string;
+
+  @IsString()
+  @MinLength(6)
+  contraseña!: string;
+}
