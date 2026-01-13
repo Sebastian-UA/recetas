@@ -47,7 +47,7 @@ export default function CrearPasswordPage() {
 
       setMessage("Contraseña creada correctamente ✅");
       setTimeout(() => {
-        router.push("/login");
+        router.push("/pages/login");
       }, 2000);
     } catch (err: any) {
       setMessage(err.message || "Error inesperado");

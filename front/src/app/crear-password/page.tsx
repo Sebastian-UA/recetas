@@ -67,7 +67,7 @@ export default function CrearPasswordPage() {
       }
 
       alert("Contraseña creada correctamente. Ahora puedes iniciar sesión.");
-      router.push("/login");
+      router.push("/pages/login");
     } catch (err: any) {
       setError(err.message);
     } finally {
