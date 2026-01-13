@@ -21,18 +21,17 @@ interface Props {
 export default function RegisterModal({ open, onClose }: Props) {
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
-  const [contraseña, setContraseña] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!nombre || !correo || !contraseña) {
+    if (!nombre || !correo ) {
       alert("Completa todos los campos");
       return;
     }
 
     try {
       setLoading(true);
-      await registerUsuario({ nombre, correo, contraseña });
+      await registerUsuario({ nombre, correo});
       alert("Usuario creado correctamente");
       onClose();
     } catch (error: any) {
@@ -64,14 +63,6 @@ export default function RegisterModal({ open, onClose }: Props) {
             />
           </div>
 
-          <div>
-            <Label>Contraseña</Label>
-            <Input
-              type="password"
-              value={contraseña}
-              onChange={(e) => setContraseña(e.target.value)}
-            />
-          </div>
         </div>
 
         <DialogFooter>

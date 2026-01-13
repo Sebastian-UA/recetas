@@ -14,12 +14,24 @@ model usuario{
   id Int  @id @default(autoincrement())
   nombre String
   correo String @unique
-  contraseña String
+  contraseña String ?
 
   receta receta[] //dice que esta esta relacionada a N (muchos), solo en prisma
-
+  PasswordToken PasswordToken[]
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt
+}
+
+model PasswordToken {
+  id         Int      @id @default(autoincrement())
+  token      String   @unique
+  expiresAt  DateTime
+  used       Boolean  @default(false)
+
+  usuarioId  Int
+  usuario   usuario  @relation(fields: [usuarioId], references: [id])
+
+  createdAt  DateTime @default(now())
 }
 
 model receta{
