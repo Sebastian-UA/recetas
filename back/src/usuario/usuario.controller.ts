@@ -1,22 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { AuthService } from 'src/auth/auth.service';
 
 @Controller('usuario')
 export class UsuarioController {
-  constructor(private readonly usuarioService: UsuarioService,
-    private readonly authService: AuthService, // 👈 FALTABA
+  constructor(
+    private readonly usuarioService: UsuarioService,
+    private readonly authService: AuthService,
   ) { }
 
-  @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuarioService.create(createUsuarioDto);
+  /* ================= REGISTRO ================= */
+
+  // Registro SIN contraseña
+  @Post('register')
+  register(
+    @Body() body: { correo: string; nombre: string },
+  ) {
+    return this.usuarioService.register(body.correo, body.nombre);
   }
 
+  // Crear contraseña desde link
+  @Post('crear-password')
+  crearPassword(
+    @Body() body: { token: string; password: string },
+  ) {
+    return this.usuarioService.crearPassword(
+      body.token,
+      body.password,
+    );
+  }
+
+  /* ================= LOGIN ================= */
+
   @Post('login')
-  async login(@Body() body: { correo: string; contraseña: string }) {
+  async login(
+    @Body() body: { correo: string; contraseña: string },
+  ) {
     const usuario = await this.usuarioService.login(
       body.correo,
       body.contraseña,
@@ -25,10 +53,7 @@ export class UsuarioController {
     return this.authService.login(usuario);
   }
 
-  @Post("register")
-  register(@Body() dto: CreateUsuarioDto) {
-    return this.usuarioService.create(dto);
-  }
+  /* ================= CRUD USUARIO ================= */
 
   @Get()
   findAll() {
@@ -41,12 +66,31 @@ export class UsuarioController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioService.update(+id, updateUsuarioDto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateUsuarioDto,
+  ) {
+    return this.usuarioService.update(+id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usuarioService.remove(+id);
   }
+
+  @Post('recover')
+  recover(@Body() body: { correo: string }) {
+    return this.usuarioService.solicitarRecuperacion(body.correo);
+  }
+
+  @Post('reset-password')
+  resetPassword(
+    @Body() body: { token: string; password: string },
+  ) {
+    return this.usuarioService.crearPassword(
+      body.token,
+      body.password,
+    );
+  }
+
 }

@@ -1,8 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { login } from "@/apis/auth.api";
 import RegisterModal from "@/components/ui/register_modal";
+import RecoverPasswordModal from "@/components/ui/recover_password_modal";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,13 +17,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
+
   const [correo, setCorreo] = useState("");
   const [contraseña, setContraseña] = useState("");
+
   const [showRegister, setShowRegister] = useState(false);
+  const [showRecover, setShowRecover] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +33,13 @@ export default function LoginPage() {
     try {
       const data = await login(correo, contraseña);
 
+      // guardar sesión
       localStorage.setItem("token", data.token);
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
       router.push("/pages/recetas");
-    } catch (error) {
-      alert("Correo o contraseña incorrectos");
+    } catch (error: any) {
+      alert(error?.message || "Correo o contraseña incorrectos");
     }
   };
 
@@ -53,6 +59,7 @@ export default function LoginPage() {
                 type="email"
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
+                required
               />
             </div>
 
@@ -62,7 +69,19 @@ export default function LoginPage() {
                 type="password"
                 value={contraseña}
                 onChange={(e) => setContraseña(e.target.value)}
+                required
               />
+            </div>
+
+            {/* RECUPERAR CONTRASEÑA */}
+            <div className="text-right">
+              <button
+                type="button"
+                className="text-sm text-blue-600 underline"
+                onClick={() => setShowRecover(true)}
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
             </div>
           </CardContent>
 
@@ -87,6 +106,12 @@ export default function LoginPage() {
       <RegisterModal
         open={showRegister}
         onClose={() => setShowRegister(false)}
+      />
+
+      {/* MODAL RECUPERAR CONTRASEÑA */}
+      <RecoverPasswordModal
+        open={showRecover}
+        onClose={() => setShowRecover(false)}
       />
     </div>
   );

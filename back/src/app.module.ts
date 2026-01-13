@@ -7,6 +7,7 @@ import { RecetaIgredientesModule } from './receta-igredientes/receta-igredientes
 import { IngredientesModule } from './ingredientes/ingredientes.module';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
     RecetaIgredientesModule,
     IngredientesModule,
     AuthModule,
+    MailModule,
   ],
   providers: [PrismaService],
 })
