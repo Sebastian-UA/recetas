@@ -16,7 +16,7 @@ export class UsuarioController {
   constructor(
     private readonly usuarioService: UsuarioService,
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   /* ================= REGISTRO ================= */
 
@@ -77,4 +77,20 @@ export class UsuarioController {
   remove(@Param('id') id: string) {
     return this.usuarioService.remove(+id);
   }
+
+  @Post('recover')
+  recover(@Body() body: { correo: string }) {
+    return this.usuarioService.solicitarRecuperacion(body.correo);
+  }
+
+  @Post('reset-password')
+  resetPassword(
+    @Body() body: { token: string; password: string },
+  ) {
+    return this.usuarioService.crearPassword(
+      body.token,
+      body.password,
+    );
+  }
+
 }

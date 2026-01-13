@@ -40,10 +40,29 @@ export class MailService {
       subject: 'Crea tu contraseña',
       html: `
         <h2>Hola ${nombre}</h2>
-        <p>Haz click en el siguiente enlace para crear tu contraseña:</p>
+        <p>Estas creando una cuenta para mi pag de recetas , te falta crear la contraseña , haz clic en el siguiente enlace para crear la contraseña:</p>
         <a href="${link}">${link}</a>
         <p>Este enlace expira en 1 hora</p>
       `,
     });
   }
+
+  async sendRecoverPasswordMail(
+    correo: string,
+    nombre: string,
+    link: string,
+  ) {
+    await this.transporter.sendMail({
+      to: correo,
+      subject: 'Recuperar contraseña',
+      html: `
+      <h2>Hola ${nombre}</h2>
+      <p>Solicitaste recuperar tu contraseña</p>
+      <p>Haz click aquí:</p>
+      <a href="${link}">${link}</a>
+      <p>Este enlace expira en 1 hora</p>
+    `,
+    });
+  }
+
 }

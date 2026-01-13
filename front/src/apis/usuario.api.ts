@@ -60,3 +60,40 @@ export async function crearPassword(
 
   return res.json();
 }
+
+export async function recoverPassword(correo: string) {
+  const res = await fetch(
+    `${API_URL}/usuario/recover`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ correo }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Error al enviar correo');
+  }
+
+  return res.json();
+}
+
+export async function resetPassword(
+  token: string,
+  password: string,
+) {
+  const res = await fetch(
+    `${API_URL}/usuario/reset-password`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Token inválido');
+  }
+
+  return res.json();
+}

@@ -18,7 +18,7 @@ import { MailModule } from 'src/mail/mail.module';
 export class UsuarioService {
 
 
-  constructor(private prismaService: PrismaService,private mailService: MailService) { }
+  constructor(private prismaService: PrismaService, private mailService: MailService) { }
 
   /* =========================
      REGISTRO (SIN CONTRASEÑA)
@@ -198,4 +198,40 @@ export class UsuarioService {
       },
     });
   }
+  
+  async solicitarRecuperacion(correo: string) {
+    const usuario = await this.prismaService.usuario.findUnique({
+      where: { correo },
+    });
+
+    // ⚠️ seguridad: no decir si existe o no
+    if (!usuario) {
+      return {
+        message: 'Si el correo existe, se enviará un enlace',
+      };
+    }
+
+    const token = crypto.randomUUID();
+
+    await this.prismaService.passwordToken.create({
+      data: {
+        token,
+        usuarioId: usuario.id,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hora
+      },
+    });
+
+    const link = `http://localhost:3000/recuperar-password?token=${token}`;
+
+    await this.mailService.sendRecoverPasswordMail(
+      usuario.correo,
+      usuario.nombre,
+      link,
+    );
+
+    return {
+      message: 'Si el correo existe, se enviará un enlace',
+    };
+  }
+
 }
