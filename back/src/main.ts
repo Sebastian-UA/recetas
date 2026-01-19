@@ -8,12 +8,14 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('api'); // ya lo tenías perfecto
+  app.setGlobalPrefix('api');
   app.enableCors();
 
-  console.log('👉 JWT_SECRET desde main:', process.env.JWT_SECRET); // test
+  const port = Number(process.env.PORT) || 3000;
+  await app.listen(port);
 
-  await app.listen(process.env.PORT ?? 4000);
+  console.log(`🚀 Backend escuchando en puerto ${port}`);
 }
+
 
 bootstrap();
