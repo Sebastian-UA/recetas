@@ -7,8 +7,9 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
 }
+
+
 
 model usuario{
   id Int  @id @default(autoincrement())
