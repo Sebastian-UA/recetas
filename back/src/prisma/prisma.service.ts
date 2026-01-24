@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService
@@ -7,13 +7,7 @@ export class PrismaService
   implements OnModuleInit {
 
   constructor() {
-    super({
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL!,
-        },
-      },
-    } as Prisma.PrismaClientOptions);
+    super(); // 👈 vacío, como exige Prisma 7
   }
 
   async onModuleInit() {
