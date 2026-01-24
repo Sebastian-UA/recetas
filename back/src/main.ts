@@ -11,8 +11,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api'); // ya lo tenías perfecto
   app.enableCors();
 
-  console.log('👉 JWT_SECRET desde main:', process.env.JWT_SECRET); // test
-
   await app.listen(process.env.PORT ?? 4000);
 }
 
