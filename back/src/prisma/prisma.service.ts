@@ -7,7 +7,9 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy {
 
   constructor() {
-    super(); // 👈 NADA AQUÍ
+    super({
+      log: ['error'], // 👈 OPCIÓN VÁLIDA, NO TOCA LA CONEXIÓN
+    });
   }
 
   async onModuleInit() {
