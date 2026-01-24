@@ -1,56 +1,70 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
-export default function CrearPasswordPage() {
+export default function CrearPasswordClient() {
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
   const router = useRouter();
 
+  const token = searchParams.get("token");
+
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmar, setConfirmar] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      setMessage("Las contraseñas no coinciden");
-      return;
-    }
+    setError("");
 
     if (!token) {
-      setMessage("Token inválido");
+      setError("Token inválido");
       return;
     }
 
-    setLoading(true);
-    setMessage("");
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+
+    if (password !== confirmar) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
 
     try {
-      const res = await fetch("http://recetas-9uau.onrender.com/api/usuario/crear-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
-      });
+      setLoading(true);
+
+      const res = await fetch(
+        "https://recetas-9uau.onrender.com/api/usuario/crear-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, password }),
+        }
+      );
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Error al crear la contraseña");
+        const data = await res.json();
+        throw new Error(data.message || "Error al crear contraseña");
       }
 
-      setMessage("Contraseña creada correctamente ✅");
-      setTimeout(() => {
-        router.push("/pages/login");
-      }, 2000);
+      alert("Contraseña creada correctamente");
+      router.push("/login");
     } catch (err: any) {
-      setMessage(err.message || "Error inesperado");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -61,7 +75,9 @@ export default function CrearPasswordPage() {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Crear contraseña</CardTitle>
-          <CardDescription>Ingresa tu nueva contraseña</CardDescription>
+          <CardDescription>
+            Ingresa tu nueva contraseña para activar tu cuenta
+          </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
@@ -72,7 +88,6 @@ export default function CrearPasswordPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
             </div>
 
@@ -80,18 +95,19 @@ export default function CrearPasswordPage() {
               <Label>Confirmar contraseña</Label>
               <Input
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
+                value={confirmar}
+                onChange={(e) => setConfirmar(e.target.value)}
               />
             </div>
 
-            {message && <p className="text-sm text-red-600">{message}</p>}
+            {error && (
+              <p className="text-sm text-red-600 text-center">{error}</p>
+            )}
           </CardContent>
 
           <CardFooter>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creando..." : "Crear contraseña"}
+              {loading ? "Guardando..." : "Crear contraseña"}
             </Button>
           </CardFooter>
         </form>

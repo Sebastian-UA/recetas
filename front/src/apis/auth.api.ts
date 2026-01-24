@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:4000/api";
+const API_URL = "http://recetas-9uau.onrender.com/api";
 
 export async function login(correo: string, contraseña: string) {
   const res = await fetch(`${API_URL}/usuario/login`, {

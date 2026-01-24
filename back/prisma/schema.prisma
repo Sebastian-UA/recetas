@@ -6,9 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  
+  provider = "postgresql"
 }
+
+
 
 model usuario{
   id Int  @id @default(autoincrement())

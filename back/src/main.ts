@@ -11,10 +11,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
-  const port = Number(process.env.PORT) || 3000;
-  await app.listen(port);
-
-  console.log(`🚀 Backend escuchando en puerto ${port}`);
+  await app.listen(process.env.PORT ?? 4000);
 }
 
 
