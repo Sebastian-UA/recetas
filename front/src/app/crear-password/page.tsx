@@ -48,7 +48,7 @@ export default function CrearPasswordPage() {
       setLoading(true);
 
       const res = await fetch(
-        "http://localhost:4000/api/usuario/crear-password",
+        "https://recetas-9uau.onrender.com/api/usuario/crear-password",
         {
           method: "POST",
           headers: {
