@@ -10,6 +10,7 @@ import {
 import { UsuarioService } from './usuario.service';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { ParseIntPipe } from '@nestjs/common';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -61,8 +62,8 @@ export class UsuarioController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usuarioService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usuarioService.findOne(id);
   }
 
   @Patch(':id')
