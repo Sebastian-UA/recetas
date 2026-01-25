@@ -1,4 +1,4 @@
-const API_URL = "http://recetas-9uau.onrender.com/api";
+const API_URL = "https://recetas-9uau.onrender.com/api";
 
 function getToken() {
   return localStorage.getItem("token");
@@ -63,7 +63,7 @@ export async function updateReceta(
   if (!token) throw new Error("No autorizado");
 
   const res = await fetch(
-    `http://recetas-9uau.onrender.com/api/receta/${recetaId}`,
+    `https://recetas-9uau.onrender.com/api/receta/${recetaId}`,
     {
       method: "PATCH", // 👈 importante
       headers: {
@@ -86,7 +86,7 @@ export async function deleteReceta(recetaId: number) {
   if (!token) throw new Error("No autorizado");
 
   const res = await fetch(
-    `http://recetas-9uau.onrender.com/api/receta/${recetaId}`,
+    `https://recetas-9uau.onrender.com/api/receta/${recetaId}`,
     {
       method: "DELETE",
       headers: {
@@ -144,7 +144,7 @@ export async function updateIngrediente(
   const token = localStorage.getItem('token');
 
   const res = await fetch(
-    `http://recetas-9uau.onrender.com/api/receta/ingrediente/${recetaIngredienteId}`,
+    `https://recetas-9uau.onrender.com/api/receta/ingrediente/${recetaIngredienteId}`,
     {
       method: 'PATCH',
       headers: {
@@ -165,7 +165,7 @@ export async function deleteIngrediente(
   token: string,
 ) {
   const res = await fetch(
-    `http://recetas-9uau.onrender.com/api/receta/ingrediente/${recetaIngredienteId}`,
+    `https://recetas-9uau.onrender.com/api/receta/ingrediente/${recetaIngredienteId}`,
     {
       method: 'DELETE',
       headers: {

@@ -1,6 +1,6 @@
 import { Usuario } from "@/types/usuario";
 
-const API_URL = "http://recetas-9uau.onrender.com/api";
+const API_URL = "https://recetas-9uau.onrender.com/api";
 
 /* ================= LOGIN ================= */
 
