@@ -62,15 +62,25 @@ export class UsuarioService {
 
     const link = `${process.env.FRONTEND_URL}/crear-password?token=${token}`;
 
-    await this.mailService.sendCreatePasswordMail(
-      usuario.correo,
-      usuario.nombre,
-      link,
-    );
+    try {
+      await this.mailService.sendCreatePasswordMail(
+        usuario.correo,
+        usuario.nombre,
+        link,
+      );
+    } catch (error) {
+      console.error('❌ ERROR EN ENVÍO DE CORREO:', error);
 
-    return {
-      message: 'Usuario creado. Revisa tu correo para crear la contraseña',
-    };
+      // OPCIÓN A: no romper el registro
+      return {
+        message:
+          'Usuario creado, pero hubo un problema enviando el correo. Intenta más tarde.',
+      };
+
+      // OPCIÓN B (más estricta): deshacer usuario
+      // throw new InternalServerErrorException('Error enviando correo');
+    }
+
   }
 
 
@@ -198,7 +208,7 @@ export class UsuarioService {
       },
     });
   }
-  
+
   async solicitarRecuperacion(correo: string) {
     const usuario = await this.prismaService.usuario.findUnique({
       where: { correo },
