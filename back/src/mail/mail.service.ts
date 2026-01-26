@@ -9,7 +9,7 @@ export class MailService {
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
-      secure: false, // true solo si usas 465
+      secure: false, // true solo si se usa 465
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
