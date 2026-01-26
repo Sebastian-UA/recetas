@@ -60,7 +60,7 @@ export class UsuarioService {
       },
     });
 
-    const link = `https://recetas-chi-ochre.vercel.app/crear-password?token=${token}`;
+    const link = `${process.env.FRONTEND_URL}/crear-password?token=${token}`;
 
     await this.mailService.sendCreatePasswordMail(
       usuario.correo,
@@ -221,7 +221,7 @@ export class UsuarioService {
       },
     });
 
-    const link = `https://recetas-chi-ochre.vercel.app/recuperar-password?token=${token}`;
+    const link = `${process.env.FRONTEND_URL}/recuperar-password?token=${token}`;
 
     await this.mailService.sendRecoverPasswordMail(
       usuario.correo,
