@@ -14,12 +14,16 @@ export async function loginUsuario(
     body: JSON.stringify({ correo, contraseña }),
   });
 
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+
   if (!res.ok) {
-    throw new Error("Credenciales incorrectas");
+    throw new Error(data?.message || "Credenciales incorrectas");
   }
 
-  return res.json();
+  return data;
 }
+
 
 /* ================= REGISTRO ================= */
 
@@ -33,67 +37,67 @@ export async function registerUsuario(data: {
     body: JSON.stringify(data),
   });
 
+  const text = await res.text();
+  const result = text ? JSON.parse(text) : null;
+
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Error al registrar");
+    throw new Error(result?.message || "Error al registrar");
   }
 
-  return res.json();
+  return result;
 }
 
 /* ================= CREAR PASSWORD ================= */
 
-export async function crearPassword(
-  token: string,
-  password: string
-) {
+export async function crearPassword(token: string, password: string) {
   const res = await fetch(`${API_URL}/usuario/crear-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, password }),
   });
 
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Error al crear contraseña");
+    throw new Error(data?.message || "Error al crear contraseña");
   }
 
-  return res.json();
+  return data;
 }
+
 
 export async function recoverPassword(correo: string) {
-  const res = await fetch(
-    `${API_URL}/usuario/recover`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ correo }),
-    },
-  );
+  const res = await fetch(`${API_URL}/usuario/recover`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ correo }),
+  });
+
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
 
   if (!res.ok) {
-    throw new Error('Error al enviar correo');
+    throw new Error(data?.message || 'Error al enviar correo');
   }
 
-  return res.json();
+  return data;
 }
 
-export async function resetPassword(
-  token: string,
-  password: string,
-) {
-  const res = await fetch(
-    `${API_URL}/usuario/reset-password`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, password }),
-    },
-  );
+
+export async function resetPassword(token: string, password: string) {
+  const res = await fetch(`${API_URL}/usuario/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, password }),
+  });
+
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
 
   if (!res.ok) {
-    throw new Error('Token inválido');
+    throw new Error(data?.message || 'Token inválido');
   }
 
-  return res.json();
+  return data;
 }

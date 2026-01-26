@@ -85,22 +85,18 @@ export async function deleteReceta(recetaId: number) {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No autorizado");
 
-  const res = await fetch(
-    `https://recetas-9uau.onrender.com/api/receta/${recetaId}`,
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const res = await fetch(`${API_URL}/receta/${recetaId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
   if (!res.ok) {
     throw new Error("Error al eliminar la receta");
   }
 
-  return res.json();
+  return null; // ✅ correcto
 }
+
 
 
 // =======================
@@ -165,12 +161,10 @@ export async function deleteIngrediente(
   token: string,
 ) {
   const res = await fetch(
-    `https://recetas-9uau.onrender.com/api/receta/ingrediente/${recetaIngredienteId}`,
+    `${API_URL}/receta/ingrediente/${recetaIngredienteId}`,
     {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     }
   );
 
@@ -178,8 +172,9 @@ export async function deleteIngrediente(
     throw new Error('Error al eliminar el ingrediente');
   }
 
-  return res.json();
+  return null;
 }
+
 
 // =======================
 // PASOS
@@ -245,9 +240,7 @@ export async function deletePaso(
     `${API_URL}/receta/paso/${pasoId}`,
     {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     },
   );
 
@@ -255,6 +248,7 @@ export async function deletePaso(
     throw new Error('Error al eliminar paso');
   }
 
-  return res.json();
+  return null;
 }
+
 
