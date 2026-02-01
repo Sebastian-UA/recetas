@@ -310,8 +310,6 @@ export default function RecetaDetallePage() {
                   value={textoPasoEditado}
                   onChange={(e) => setTextoPasoEditado(e.target.value)}
                 />
-                <input type="checkbox" />
-
 
                 <div className="flex gap-2">
                   <button
@@ -330,6 +328,7 @@ export default function RecetaDetallePage() {
               </>
             ) : (
               <>
+                <input type="checkbox" />
                 <p>{p.pasos}</p>
                 <div className="mt-2 flex gap-3">
                   <button
