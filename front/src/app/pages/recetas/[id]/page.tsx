@@ -232,7 +232,6 @@ export default function RecetaDetallePage() {
       <ul className="space-y-2">
         {receta.receta_ingrediente.map((ri: any) => (
           <li key={ri.id} className="border p-2 rounded">
-              <input type="checkbox" />
             {editandoId === ri.id ? (
               <>
                 <input
@@ -246,7 +245,7 @@ export default function RecetaDetallePage() {
                   value={cantidadEditada}
                   onChange={(e) => setCantidadEditada(e.target.value)}
                 />
-
+                 <input type="checkbox" />
                 <div className="mt-2 flex gap-2">
                   <button
                     className="bg-blue-600 text-white px-2 rounded"
