@@ -245,7 +245,7 @@ export default function RecetaDetallePage() {
                   value={cantidadEditada}
                   onChange={(e) => setCantidadEditada(e.target.value)}
                 />
-                 <input type="checkbox" />
+                <input type="checkbox" />
                 <div className="mt-2 flex gap-2">
                   <button
                     className="bg-blue-600 text-white px-2 rounded"
