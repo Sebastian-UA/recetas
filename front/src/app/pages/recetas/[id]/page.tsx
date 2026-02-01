@@ -346,6 +346,8 @@ export default function RecetaDetallePage() {
                     Eliminar
                   </button>
                 </div>
+                <input type="checkbox" />
+
               </>
             )}
           </li>
