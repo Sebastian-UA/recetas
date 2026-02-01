@@ -263,6 +263,7 @@ export default function RecetaDetallePage() {
             ) : (
               <>
                 <strong>{ri.ingrediente.nombre}</strong> — {ri.cantidad}
+                <input type="checkbox" />
                 <div className="mt-1 flex gap-3">
                   <button
                     className="text-sm text-blue-600"
@@ -283,7 +284,7 @@ export default function RecetaDetallePage() {
                 </div>
               </>
             )}
-             <input type="checkbox" />
+             
           </li>
         ))}
       </ul>
