@@ -232,6 +232,7 @@ export default function RecetaDetallePage() {
       <ul className="space-y-2">
         {receta.receta_ingrediente.map((ri: any) => (
           <li key={ri.id} className="border p-2 rounded">
+              <input type="checkbox" />
             {editandoId === ri.id ? (
               <>
                 <input
