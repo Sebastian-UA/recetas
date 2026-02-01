@@ -328,8 +328,9 @@ export default function RecetaDetallePage() {
               </>
             ) : (
               <>
-                <input type="checkbox" />
                 <p>{p.pasos}</p>
+                <input type="checkbox" />
+
                 <div className="mt-2 flex gap-3">
                   <button
                     className="text-sm text-blue-600"
