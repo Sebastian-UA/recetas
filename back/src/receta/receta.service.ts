@@ -13,8 +13,8 @@ export class RecetaService {
       data: {
         nombre: dto.nombre,
         imagen: dto.imagen,
-        usuario: {
-          connect: { id: usuarioId },
+        usuario: {//conecta un usuario
+          connect: { id: usuarioId },//en relacion al id del usuario existente
         },
       },
     });

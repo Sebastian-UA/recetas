@@ -23,14 +23,14 @@ export class UsuarioService {
   /* =========================
      REGISTRO (SIN CONTRASEÑA)
      ========================= */
-  async create(dto: CreateUsuarioDto) {
-    return this.prismaService.usuario.create({
-      data: {
+  async create(dto: CreateUsuarioDto) { //el objeto del dto, CreateUsuarioDto
+    return this.prismaService.usuario.create({//para ingresar a la tabla de usuario, en forma de create
+      data: {//aca se guardan los datos
         correo: dto.correo,
         nombre: dto.nombre,
         contraseña: null,
       },
-      select: {
+      select: {//un select para traer estos datos de la bd
         id: true,
         correo: true,
         nombre: true,
@@ -50,13 +50,13 @@ export class UsuarioService {
       },
     });
 
-    const token = crypto.randomUUID();
+    const token = crypto.randomUUID();//genera un id random
 
     await this.prismaService.passwordToken.create({
       data: {
         token,
         usuarioId: usuario.id,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60),//tiempo para que expire el token
       },
     });
 
@@ -71,14 +71,11 @@ export class UsuarioService {
     } catch (error) {
       console.error('❌ ERROR EN ENVÍO DE CORREO:', error);
 
-      // OPCIÓN A: no romper el registro
       return {
         message:
           'Usuario creado, pero hubo un problema enviando el correo. Intenta más tarde.',
       };
 
-      // OPCIÓN B (más estricta): deshacer usuario
-      // throw new InternalServerErrorException('Error enviando correo');
     }
 
   }
@@ -122,14 +119,14 @@ export class UsuarioService {
      ========================= */
   async login(correo: string, contraseña: string) {
     const usuario = await this.prismaService.usuario.findUnique({
-      where: { correo },
+      where: { correo },//busca un correo con esos datos
     });
 
-    if (!usuario) {
+    if (!usuario) {//si usuario es distinto , manda ese error
       throw new NotFoundException('Usuario no existe');
     }
 
-    if (!usuario.contraseña) {
+    if (!usuario.contraseña) {//si la contraseña de usuario es diferente manda ese error
       throw new ConflictException(
         'Debes crear tu contraseña desde el correo',
       );
@@ -183,8 +180,8 @@ export class UsuarioService {
   async update(id: number, dto: UpdateUsuarioDto) {
     const data: any = { ...dto };
 
-    if (dto.contraseña) {
-      data.contraseña = await bcrypt.hash(dto.contraseña, 10);
+    if (dto.contraseña) {//si dto , viene con contraseña
+      data.contraseña = await bcrypt.hash(dto.contraseña, 10);//remplaza la contra por su hash, para mas seguridad
     }
 
     return this.prismaService.usuario.update({
