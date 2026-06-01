@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common';//para definir modulo nest
+import { ConfigModule } from '@nestjs/config';//para usar las variables de entorno
 import { RecetaModule } from './receta/receta.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { PasosModule } from './pasos/pasos.module';
