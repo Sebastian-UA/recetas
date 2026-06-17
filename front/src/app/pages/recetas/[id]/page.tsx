@@ -218,199 +218,201 @@ export default function RecetaDetallePage() {
   if (!receta) return <p>No existe esa receta</p>;
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-3">{receta.nombre}</h1>
+    <div className='bg-[#abe3ee]'>
+      <div className="p-4 max-w-xl mx-auto bg-[#7c9ccf]">
+        <h1 className="text-2xl font-bold mb-3">{receta.nombre}</h1>
 
-      {receta.imagen && (
-        <img src={receta.imagen} className="w-60 mb-4 rounded" />
-      )}
+        {receta.imagen && (
+          <img src={receta.imagen} className="w-60 mb-4 rounded item-center" />
+        )}
 
-      {/* ================= INGREDIENTES ================= */}
+        {/* ================= INGREDIENTES ================= */}
 
-      <h2 className="text-lg font-semibold mb-2">Ingredientes</h2>
+        <h2 className="text-lg font-semibold mb-2">Ingredientes</h2>
 
-      <ul className="space-y-2">
-        {receta.receta_ingrediente.map((ri: any) => (
-          <li key={ri.id} className="border p-2 rounded">
-            {editandoId === ri.id ? (
-              <>
-                <input
-                  className="border p-1 mb-1 w-full"
-                  value={nombreEditado}
-                  onChange={(e) => setNombreEditado(e.target.value)}
-                />
+        <ul className="space-y-2 ">
+          {receta.receta_ingrediente.map((ri: any) => (
+            <li key={ri.id} className="border p-2 rounded bg-[#eaf8fb]">
+              {editandoId === ri.id ? (
+                <>
+                  <input
+                    className="border p-1 mb-1 w-full"
+                    value={nombreEditado}
+                    onChange={(e) => setNombreEditado(e.target.value)}
+                  />
 
-                <input
-                  className="border p-1 w-full"
-                  value={cantidadEditada}
-                  onChange={(e) => setCantidadEditada(e.target.value)}
-                />
-                <div className="mt-2 flex gap-2">
-                  <button
-                    className="bg-blue-600 text-white px-2 rounded"
-                    onClick={() => guardarEdicion(ri.id)}
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    className="text-sm"
-                    onClick={() => setEditandoId(null)}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <strong>{ri.ingrediente.nombre}</strong> — {ri.cantidad}
-                <input type="checkbox" />
-                <div className="mt-1 flex gap-3">
-                  <button
-                    className="text-sm text-blue-600"
-                    onClick={() => {
-                      setEditandoId(ri.id);
-                      setNombreEditado(ri.ingrediente.nombre);
-                      setCantidadEditada(ri.cantidad);
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="text-sm text-red-600"
-                    onClick={() => eliminarIngrediente(ri.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </>
-            )}
-             
-          </li>
-        ))}
-      </ul>
+                  <input
+                    className="border p-1 w-full"
+                    value={cantidadEditada}
+                    onChange={(e) => setCantidadEditada(e.target.value)}
+                  />
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      className="bg-blue-600 text-white px-2 rounded"
+                      onClick={() => guardarEdicion(ri.id)}
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      className="text-sm"
+                      onClick={() => setEditandoId(null)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <strong>{ri.ingrediente.nombre}</strong> — {ri.cantidad}
+                  <input type="checkbox" />
+                  <div className="mt-1 flex gap-3">
+                    <button
+                      className="text-sm text-blue-600"
+                      onClick={() => {
+                        setEditandoId(ri.id);
+                        setNombreEditado(ri.ingrediente.nombre);
+                        setCantidadEditada(ri.cantidad);
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="text-sm text-red-600"
+                      onClick={() => eliminarIngrediente(ri.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </>
+              )}
 
-      <button
-        className="mt-4 bg-green-600 text-white px-3 py-1 rounded"
-        onClick={() => setMostrarModal(true)}
-      >
-        Agregar ingrediente
-      </button>
+            </li>
+          ))}
+        </ul>
 
-      {/* ================= PASOS ================= */}
+        <button
+          className="mt-4 bg-green-600 text-white px-3 py-1 rounded"
+          onClick={() => setMostrarModal(true)}
+        >
+          Agregar ingrediente
+        </button>
 
-      <h2 className="text-lg font-semibold mt-6 mb-2">Pasos</h2>
+        {/* ================= PASOS ================= */}
 
-      <ol className="list-decimal ml-6 space-y-2">
-        {receta.pasos?.map((p: any) => (
-          <li key={p.id} className="border p-2 rounded">
-            {editandoPasoId === p.id ? (
-              <>
-                <textarea
-                  className="border w-full p-2 mb-2"
-                  value={textoPasoEditado}
-                  onChange={(e) => setTextoPasoEditado(e.target.value)}
-                />
+        <h2 className="text-lg font-semibold mt-6 mb-2">Pasos</h2>
 
-                <div className="flex gap-2">
-                  <button
-                    className="bg-blue-600 text-white px-2 rounded"
-                    onClick={() => guardarEdicionPaso(p.id)}
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    className="text-sm"
-                    onClick={() => setEditandoPasoId(null)}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <p>{p.pasos}</p>
-                <input type="checkbox" />
+        <ol className="list-decimal ml-6 space-y-2 ">
+          {receta.pasos?.map((p: any) => (
+            <li key={p.id} className="border p-2 rounded bg-[#eaf8fb]">
+              {editandoPasoId === p.id ? (
+                <>
+                  <textarea
+                    className="border w-full p-2 mb-2"
+                    value={textoPasoEditado}
+                    onChange={(e) => setTextoPasoEditado(e.target.value)}
+                  />
 
-                <div className="mt-2 flex gap-3">
-                  <button
-                    className="text-sm text-blue-600"
-                    onClick={() => {
-                      setEditandoPasoId(p.id);
-                      setTextoPasoEditado(p.pasos);
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="text-sm text-red-600"
-                    onClick={() => eliminarPaso(p.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
-      </ol>
+                  <div className="flex gap-2">
+                    <button
+                      className="bg-blue-600 text-white px-2 rounded"
+                      onClick={() => guardarEdicionPaso(p.id)}
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      className="text-sm"
+                      onClick={() => setEditandoPasoId(null)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p>{p.pasos}</p>
+                  <input type="checkbox" />
 
-      <button
-        className="mt-4 bg-green-600 text-white px-3 py-1 rounded"
-        onClick={() => setMostrarModalPaso(true)}
-      >
-        Agregar paso
-      </button>
+                  <div className="mt-2 flex gap-3">
+                    <button
+                      className="text-sm text-blue-600"
+                      onClick={() => {
+                        setEditandoPasoId(p.id);
+                        setTextoPasoEditado(p.pasos);
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="text-sm text-red-600"
+                      onClick={() => eliminarPaso(p.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </>
+              )}
+            </li>
+          ))}
+        </ol>
 
-      {/* ================= MODALES ================= */}
+        <button
+          className="mt-4 bg-green-600 text-white px-3 py-1 rounded"
+          onClick={() => setMostrarModalPaso(true)}
+        >
+          Agregar paso
+        </button>
 
-      {mostrarModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded w-80">
-            <h3 className="text-lg font-bold mb-3">Nuevo ingrediente</h3>
+        {/* ================= MODALES ================= */}
 
-            <input
-              className="border w-full p-1 mb-2"
-              placeholder="Ingrediente"
-              value={nombreIngrediente}
-              onChange={(e) => setNombreIngrediente(e.target.value)}
-            />
+        {mostrarModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div className="bg-[#7189b6] p-4 rounded w-80">
+              <h3 className="text-lg font-bold mb-3">Nuevo ingrediente</h3>
 
-            <input
-              className="border w-full p-1 mb-3"
-              placeholder="Cantidad"
-              value={cantidad}
-              onChange={(e) => setCantidad(e.target.value)}
-            />
+              <input
+                className="border w-full p-1 mb-2 bg-[#eaf8fb]"
+                placeholder="Ingrediente"
+                value={nombreIngrediente}
+                onChange={(e) => setNombreIngrediente(e.target.value)}
+              />
 
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setMostrarModal(false)}>Cancelar</button>
-              <button onClick={guardarIngrediente}>Guardar</button>
+              <input
+                className="border w-full p-1 mb-3 bg-[#eaf8fb]"
+                placeholder="Cantidad"
+                value={cantidad}
+                onChange={(e) => setCantidad(e.target.value)}
+              />
+
+              <div className="flex justify-end gap-2">
+                <button className='bg-red-500 rounded-full px-2 py-1 ' onClick={() => setMostrarModal(false)}>Cancelar</button>
+                <button className='bg-green-500 rounded-full px-2 py-1 ' onClick={guardarIngrediente}>Guardar</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {mostrarModalPaso && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded w-96">
-            <h3 className="text-lg font-bold mb-3">Nuevo paso</h3>
+        {mostrarModalPaso && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div className="bg-[#7189b6] p-4 rounded w-96">
+              <h3 className="text-lg font-bold mb-3">Nuevo paso</h3>
 
-            <textarea
-              className="border w-full p-2 mb-3"
-              rows={4}
-              value={textoPaso}
-              onChange={(e) => setTextoPaso(e.target.value)}
-            />
+              <textarea
+                className="border w-full p-2 mb-3 bg-[#eaf8fb]"
+                rows={4}
+                value={textoPaso}
+                onChange={(e) => setTextoPaso(e.target.value)}
+              />
 
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setMostrarModalPaso(false)}>
-                Cancelar
-              </button>
-              <button onClick={guardarPaso}>Guardar</button>
+              <div className="flex justify-end gap-2">
+                <button className='bg-red-500 rounded-full px-2 py-1' onClick={() => setMostrarModalPaso(false)}>
+                  Cancelar
+                </button>
+                <button className='bg-green-500 rounded-full px-2 py-1 ' onClick={guardarPaso}>Guardar</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

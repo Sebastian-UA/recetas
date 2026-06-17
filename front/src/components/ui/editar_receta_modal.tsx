@@ -36,25 +36,25 @@ export default function EditarRecetaModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-      <div className="bg-white p-5 rounded w-96">
-        <h3 className="text-lg font-bold mb-4">Editar receta</h3>
+      <div className="bg-[#7189b6]  p-5 rounded w-96 ">
+        <h3 className="text-lg font-bold mb-4 text-indigo-50">Editar receta</h3>
 
         <input
-          className="border w-full p-2 mb-3"
+          className="border w-full p-2 mb-3 bg-indigo-50"
           placeholder="Nombre"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
         />
 
         <input
-          className="border w-full p-2 mb-4"
+          className="border w-full p-2 mb-4 bg-indigo-50"
           placeholder="URL de imagen"
           value={imagen}
           onChange={(e) => setImagen(e.target.value)}
         />
 
         <div className="flex justify-end gap-2">
-          <button className="border px-3 py-1 rounded" onClick={onClose}>
+          <button className="bg-red-600 text-white px-3 py-1 rounded" onClick={onClose}>
             Cancelar
           </button>
 

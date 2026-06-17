@@ -44,7 +44,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#abe3ee]">
+    <div className="min-h-screen items-center justify-center bg-[#abe3ee] flex flex-col">
+      <h1 className="text-5xl font-bold">Mis Recetas</h1>
       <Card className="w-full max-w-sm bg-[#7189b6]">
         <CardHeader>
           <CardTitle className="text-indigo-50">Entrar</CardTitle>
