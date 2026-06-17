@@ -29,28 +29,30 @@ export default function CrearRecetaModal({
   };
 
   return (
-    <Dialog>
+    <Dialog >
       <DialogTrigger asChild>
-        <Button>Nueva receta</Button>
+        <Button className="text-sm rounded-full  text-amber-50 bg-[#1a0083] px-2 py-1">
+          Nueva receta
+          </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="bg-[#7189b6]">
         <DialogHeader>
-          <DialogTitle>Crear receta</DialogTitle>
+          <DialogTitle className="text-amber-50">Crear receta</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label>Nombre</Label>
-            <Input value={nombre} onChange={(e) => setNombre(e.target.value)} />
+            <Label className="text-amber-50 py-1">Nombre</Label>
+            <Input className="bg-amber-50 border-zinc-950 border-2" value={nombre} onChange={(e) => setNombre(e.target.value)} />
           </div>
 
           <div>
-            <Label>Imagen (URL)</Label>
-            <Input value={imagen} onChange={(e) => setImagen(e.target.value)} />
+            <Label className="text-amber-50 py-1">Imagen (URL)</Label>
+            <Input className="bg-amber-50 border-zinc-950 border-2" value={imagen} onChange={(e) => setImagen(e.target.value)} />
           </div>
 
-          <Button onClick={handleCreate}>Guardar</Button>
+          <Button className="bg-[#1a0083]" onClick={handleCreate}>Guardar</Button>
         </div>
       </DialogContent>
     </Dialog>

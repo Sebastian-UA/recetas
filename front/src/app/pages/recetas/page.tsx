@@ -61,75 +61,77 @@ export default function RecetasPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="flex justify-between mb-6 items-center">
-        <div>
-          <h1 className="text-2xl font-bold">Mis recetas</h1>
+    <div className="min-h-screen bg-[#abe3ee]">
+      <div className="max-w-4xl mx-auto p-6" >
+        <div className="flex flex-col justify-between my-6 items-center">
+          <div className="flex my-5">
+            <h1 className="text-9xl font-bold ">Mis recetas</h1>
 
-          {usuario && (
-            <p className="text-sm text-gray-600">
-              Bienvenido <strong>{usuario.nombre}</strong>
-            </p>
-          )}
+            {usuario && (
+              <p className="text-sm text-gray-600">
+                Bienvenido <strong>{usuario.nombre}</strong>
+              </p>
+            )}
+          </div>
+
+          <CrearRecetaModal onCreated={recargarRecetas} />
         </div>
 
-        <CrearRecetaModal onCreated={recargarRecetas} />
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+          {recetas.map((r: any) => (
+            <div
+              key={r.id}
+              className=" p-4 rounded-4xl hover:shadow bg-[#7c9ccf]"
+            >
+              <Link href={`/pages/recetas/${r.id}`}>
+                <h2 className="font-semibold">{r.nombre}</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {recetas.map((r: any) => (
-          <div
-            key={r.id}
-            className="border p-4 rounded hover:shadow"
-          >
-            <Link href={`/pages/recetas/${r.id}`}>
-              <h2 className="font-semibold">{r.nombre}</h2>
+                {r.imagen && (
+                  <img
+                    src={r.imagen}
+                    className="mt-2 rounded h-40 w-full object-cover"
+                  />
+                )}
+              </Link>
 
-              {r.imagen && (
-                <img
-                  src={r.imagen}
-                  className="mt-2 rounded h-40 w-full object-cover"
-                />
-              )}
-            </Link>
+              {/* BOTONES */}
+              <div className="flex gap-4 mt-3">
+                <button
+                  className="text-sm rounded-full  text-amber-50 bg-[#4050ff] px-2 py-1"
+                  onClick={() => setRecetaEditando(r)}
+                >
+                  Editar
+                </button>
 
-            {/* BOTONES */}
-            <div className="flex gap-4 mt-3">
-              <button
-                className="text-sm text-blue-600"
-                onClick={() => setRecetaEditando(r)}
-              >
-                Editar
-              </button>
-
-              <button
-                className="text-sm text-red-600"
-                disabled={eliminandoId === r.id}
-                onClick={() => eliminar(r.id)}
-              >
-                {eliminandoId === r.id
-                  ? "Eliminando..."
-                  : "Eliminar"}
-              </button>
+                <button
+                  className="text-sm text-amber-50 rounded-full bg-red-600 px-2 py-1"
+                  disabled={eliminandoId === r.id}
+                  onClick={() => eliminar(r.id)}
+                >
+                  {eliminandoId === r.id
+                    ? "Eliminando..."
+                    : "Eliminar"}
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* MODAL EDITAR */}
-      {recetaEditando && (
-        <EditarRecetaModal
-          receta={recetaEditando}
-          onClose={() => setRecetaEditando(null)}
-          onUpdated={(actualizada) => {
-            setRecetas((prev) =>
-              prev.map((r) =>
-                r.id === actualizada.id ? actualizada : r
-              )
-            );
-          }}
-        />
-      )}
+        {/* MODAL EDITAR */}
+        {recetaEditando && (
+          <EditarRecetaModal
+            receta={recetaEditando}
+            onClose={() => setRecetaEditando(null)}
+            onUpdated={(actualizada) => {
+              setRecetas((prev) =>
+                prev.map((r) =>
+                  r.id === actualizada.id ? actualizada : r
+                )
+              );
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }

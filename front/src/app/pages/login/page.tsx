@@ -44,18 +44,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Card className="w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center bg-[#abe3ee]">
+      <Card className="w-full max-w-sm bg-[#7189b6]">
         <CardHeader>
-          <CardTitle>Entrar</CardTitle>
-          <CardDescription>Ingresa a tu cuenta</CardDescription>
+          <CardTitle className="text-indigo-50">Entrar</CardTitle>
+          <CardDescription className="text-indigo-100">Ingresa a tu cuenta</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div>
-              <Label>Correo</Label>
+              <Label className="text-indigo-50">Correo</Label>
               <Input
+                className="bg-amber-50"
                 type="email"
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
@@ -64,8 +65,9 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <Label>Contraseña</Label>
+              <Label className="text-indigo-50">Contraseña</Label>
               <Input
+                className="bg-amber-50"
                 type="password"
                 value={contraseña}
                 onChange={(e) => setContraseña(e.target.value)}
@@ -77,7 +79,7 @@ export default function LoginPage() {
             <div className="text-right">
               <button
                 type="button"
-                className="text-sm text-blue-600 underline"
+                className="text-sm text-blue-50 underline"
                 onClick={() => setShowRecover(true)}
               >
                 ¿Olvidaste tu contraseña?
