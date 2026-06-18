@@ -60,6 +60,12 @@ export default function RecetasPage() {
     }
   };
 
+  const [busqueda, setBusqueda] = useState("");
+
+  const recetasFiltradas = recetas.filter((r) =>
+    r.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-[#abe3ee]">
       <div className="max-w-4xl mx-auto p-6" >
@@ -74,11 +80,19 @@ export default function RecetasPage() {
             )}
           </div>
 
+          <input
+            type="text"
+            placeholder="🔍 Buscar receta..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="max-w-md mt-4 px-8 py-2 my-2 rounded-full border bg-white"
+          />
+
           <CrearRecetaModal onCreated={recargarRecetas} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-          {recetas.map((r: any) => (
+          {recetasFiltradas.map((r: any) => (
             <div
               key={r.id}
               className=" p-4 rounded-4xl hover:shadow bg-[#7c9ccf]"
