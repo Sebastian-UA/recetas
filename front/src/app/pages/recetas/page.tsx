@@ -59,7 +59,7 @@ export default function RecetasPage() {
       setEliminandoId(null);
     }
   };
-
+  //para barra de busqueda
   const [busqueda, setBusqueda] = useState("");
 
   const recetasFiltradas = recetas.filter((r) =>
@@ -80,6 +80,7 @@ export default function RecetasPage() {
             )}
           </div>
 
+          {/* Barra de busqueda */}
           <input
             type="text"
             placeholder="🔍 Buscar receta..."
