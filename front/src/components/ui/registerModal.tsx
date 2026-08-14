@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface Props {
+interface Props {// Define la estructura que debe tener el objeto
   open: boolean;
   onClose: () => void;
 }
@@ -31,7 +31,7 @@ export default function RegisterModal({ open, onClose }: Props) {
     setLoading(true);
 
     try {
-      await registerUsuario({
+      await registerUsuario({//enviar esos datos a registerUsuario del api
         correo,
         nombre: nombre || undefined,
       });
@@ -44,7 +44,7 @@ export default function RegisterModal({ open, onClose }: Props) {
     }
   };
 
-  const handleClose = () => {
+  const handleClose = () => {//limpiar formulario y todos los datos
     setCorreo("");
     setNombre("");
     setError("");
@@ -53,7 +53,7 @@ export default function RegisterModal({ open, onClose }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={handleClose}>{/*dialog es una ventana modal*/}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Crear cuenta</DialogTitle>
@@ -89,7 +89,7 @@ export default function RegisterModal({ open, onClose }: Props) {
             <Button
               type="submit"
               className="w-full"
-              disabled={loading}
+              disabled={loading}// Deshabilitar el elemento mientras loading sea true
             >
               {loading ? "Creando..." : "Crear cuenta"}
             </Button>
